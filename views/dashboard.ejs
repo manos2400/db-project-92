@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <!-- Material Design CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+</head>
+<body>
+  <h1>Welcome to the Dashboard, <%= username %>!</h1>
+  <p>Real Name: <%= realName %></p>
+  <p>Permission Level: <%= permissionLevel %></p>
+  <p>School ID: <%= schoolId %></p>
+  <!-- Additional content for the dashboard page -->
+  <form action="/books" method="get">
+    <button class="btn waves-effect waves-light" type="submit">Books</button>
+  </form>
+  <form action="/logout" method="post">
+    <button class="btn waves-effect waves-light" type="submit">Logout</button>
+  </form>
+</body>
+</html>
