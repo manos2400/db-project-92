@@ -1,9 +1,9 @@
-const express=require('express')
-const mariadb = require('mariadb');
+const express = require('express')
+const pool = require('../database.js');
 
-const router=express.Router()
+const router = express.Router()
 
-router.post("/", async (req,res)=>{
+router.post("/", async (req, res) => {
     const { username, password } = req.body;
 
     if (!username || !password) {
@@ -11,12 +11,7 @@ router.post("/", async (req,res)=>{
     }
 
     // Connect to MariaDB
-    const connection = await mariadb.createConnection({
-        host: process.env.DB_HOST,
-        user: process.env.DB_USER,
-        password: process.env.DB_PASS,
-        database: 'libraries'
-    });
+    const connection = await pool.getConnection();
 
     try {
         // Check credentials
@@ -25,21 +20,26 @@ router.post("/", async (req,res)=>{
             // Successful login
             // Cache important user information in session
             req.session.loggedIn = true;
-            req.session.username = username;
-            req.session.real_name = rows[0].real_name;
-            req.session.permission_level = rows[0].permission_level;
-            req.session.userID = rows[0].id;
-            res.redirect('/dashboard');
+            req.session.user = {
+                type: rows[0].type,
+                id: rows[0].id
+            }
+            // Get school information
+            const schools = await connection.query(`SELECT * FROM school_users WHERE user_id = ?;`, [req.session.user.id]);
+            req.session.school = {
+                id: schools[0].school_id
+            };
+            return res.redirect('/dashboard');
         } else {
             // Invalid credentials
-            res.send('Invalid credentials');
+            return res.send('Invalid credentials');
         }
     } catch (error) {
         console.error(error);
-        res.send('Error occurred during login');
+        return res.send('Error occurred during login');
     } finally {
-        connection.end();
+        connection.release();
     }
 })
 
-module.exports=router;
+module.exports = router;

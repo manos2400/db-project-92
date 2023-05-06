@@ -1,5 +1,5 @@
 const express = require('express')
-const mariadb = require('mariadb');
+const pool = require('../database.js');
 
 const router=express.Router()
 
@@ -11,12 +11,7 @@ router.get("/", async (req,res)=>{
     
         // Fetch books from school_books table based on school_id
 
-        const connection = await mariadb.createConnection({
-            host: process.env.DB_HOST,
-            user: process.env.DB_USER,
-            password: process.env.DB_PASS,
-            database: 'libraries'
-        });
+        const connection = await pool.getConnection();
 
         try {
             // Check credentials
@@ -28,20 +23,20 @@ router.get("/", async (req,res)=>{
             }
         } catch (error) {
             console.error(error);
-            res.send('Error occurred during login');
+            return res.status(500).send('Internal Server Error');
         } finally {
-            connection.end();
+            connection.release();
         }
     
         // Render the books view and pass the fetched books as locals
-        res.render('books', { books: req.session.books });
+        return res.render('books', { books: req.session.books });
         } catch (error) {
         console.error(error);
         // Render an error view or send an error response
-        res.status(500).send('Internal Server Error');
+        return res.status(500).send('Internal Server Error');
         }
     } else {
-        res.redirect('/');
+        return res.redirect('/');
     }
 })
 
