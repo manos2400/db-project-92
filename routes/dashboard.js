@@ -1,45 +1,45 @@
 const express=require('express')
-const mariadb = require('mariadb');
+const pool = require('../database.js');
 
 const router=express.Router()
 
 router.get("/", async (req,res)=>{
-    if (req.session.loggedIn) {
+    if (!req.session.loggedIn) { return res.redirect('/'); }
         // Retrieve session information
-        const username = req.session.username;
-        const realName = req.session.real_name;
-        const permissionLevel = req.session.permission_level;
-        const userID = req.session.userID;
+        const connection = await pool.getConnection();
 
-        const connection = await mariadb.createConnection({
-            host: process.env.DB_HOST,
-            user: process.env.DB_USER,
-            password: process.env.DB_PASS,
-            database: 'libraries'
-        });
-
+        let loans, reservations;
+        let activeLoansCount = 0;
         try {
-            // Get school_id from school_users table
-            const rows = await connection.query(`SELECT * FROM school_users WHERE user_id = ?`, [userID]);
-            req.session.school_id = rows[0].school_id;
+            loans = await connection.query(`
+            SELECT books.title, loans.date_out, loans.date_due, loans.date_in
+            FROM books
+            INNER JOIN loans ON books.id = loans.book_id
+            WHERE loans.user_id = ?;
+            `, [req.session.user.id]);
+            reservations = await connection.query(`
+            SELECT books.title, r.date, r.date_due
+            FROM books
+            INNER JOIN reservations r ON books.id = r.book_id
+            WHERE r.user_id = ?;
+            `, [req.session.user.id]);
+            const rows = await connection.query(`
+            SELECT * FROM loans WHERE user_id = ? AND date_in IS NULL;`, [req.session.user.id]);
+            activeLoansCount = rows.length;
         } catch (error) {
             console.error(error);
-            res.send('Error occurred during login');
+            return res.send('Database error occurred');
         } finally {
-            connection.end();
+            connection.release();
         }
         
-        const schoolId = req.session.school_id;
         // Render the dashboard view and pass session information as locals
-        res.render('dashboard', {
-            username,
-            realName,
-            permissionLevel,
-            schoolId
+        return res.render('dashboard', {
+            session : req.session,
+            loans,
+            reservations,
+            activeLoansCount
         });
-    } else {
-        res.redirect('/');
-    }
 })
 
 module.exports = router;
