@@ -1,13 +1,14 @@
 const express = require('express');
 const session = require('express-session');
 const bodyParser = require('body-parser');
-const mariadb = require('mariadb');
-
+require('dotenv').config();
 const app = express();
 app.set('view engine', 'ejs');
 // Use sessions for tracking login state
+
 app.use(session({
     secret: process.env.SESSION_SECRET,
+    signed: true,
     resave: true,
     saveUninitialized: false
 }));
@@ -17,7 +18,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/', express.static('public'));
 // Serve login page
 app.get('/', (req, res) => {
-    res.render('login');
+    if (req.session.loggedIn) { return res.redirect('/dashboard'); }
+    return res.render('login');
 });
 
 // Process login form
@@ -28,11 +30,14 @@ app.use('/dashboard', require('./routes/dashboard.js'));
 
 // Display the books page
 app.use('/books', require('./routes/books.js'));
+
+// Display the profile page
+app.use('/profile', require('./routes/profile.js'));
   
 // Process logout form
 app.post('/logout', (req, res) => {
     req.session.destroy();
-    res.redirect('/');
+    return res.redirect('/');
 });
 
 // Start the server
