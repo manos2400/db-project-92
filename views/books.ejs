@@ -15,7 +15,7 @@
     h1 {
       margin-top: 30px;
     }
-    
+
     .grid-container {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -54,7 +54,7 @@
 
 <body>
   <div id="root" style="text-align:center;">
-        <h1>Books Available in Your School</h1>
+    <h1>Books Available in Your School</h1>
     <div class="grid-container">
       <% books.forEach(book => { %>
       <li>
@@ -76,12 +76,12 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
       const bookDetails = document.getElementsByClassName('book-details');
       const bookCovers = document.querySelectorAll('.grid-container li img');
 
       for (let i = 0; i < bookCovers.length; i++) {
-        bookCovers[i].addEventListener('click', function () {
+        bookCovers[i].addEventListener('click', function() {
           bookDetails[i].style.display = bookDetails[i].style.display === 'none' ? 'block' : 'none';
         });
       }

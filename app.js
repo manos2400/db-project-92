@@ -2,10 +2,12 @@ const express = require('express');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 require('dotenv').config();
+
+// Create the server
 const app = express();
 app.set('view engine', 'ejs');
-// Use sessions for tracking login state
 
+// Use sessions for tracking login state
 app.use(session({
     secret: process.env.SESSION_SECRET,
     signed: true,
@@ -33,7 +35,7 @@ app.use('/books', require('./routes/books.js'));
 
 // Display the profile page
 app.use('/profile', require('./routes/profile.js'));
-  
+
 // Process logout form
 app.post('/logout', (req, res) => {
     req.session.destroy();
