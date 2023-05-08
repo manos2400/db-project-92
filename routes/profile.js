@@ -20,12 +20,12 @@ router.get("/", async (req, res) => {
         if (rows.length !== 0) {
             user = users[0];
         } else {
-            throw new Error('School not found');
+            throw new Error('User not found');
         }
 
     } catch (error) {
         console.error(error);
-        return res.status(500).send('Database error occurred');
+        return res.status(503).send('Database is currently unavailable.');
     } finally {
         connection.release();
     }
