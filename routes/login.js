@@ -7,7 +7,9 @@ router.post("/", async (req, res) => {
     const { username, password } = req.body;
 
     if (!username || !password) {
-        return res.send('Invalid credentials');
+        return res.render('login', {
+            invalid: true
+        });
     }
 
     // Connect to MariaDB
@@ -32,11 +34,13 @@ router.post("/", async (req, res) => {
             return res.redirect('/dashboard');
         } else {
             // Invalid credentials
-            return res.send('Invalid credentials');
+            return res.render('login', {
+                invalid: true
+            });
         }
     } catch (error) {
         console.error(error);
-        return res.send('Error occurred during login');
+        return res.status(500).send('Internal server error');
     } finally {
         connection.release();
     }
