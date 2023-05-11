@@ -29,6 +29,9 @@ app.get('/', (req, res) => {
 // Process login form
 app.use('/login', require('./routes/login.js'));
 
+// Process change password page
+app.use('/password', require('./routes/password.js'));
+
 // Serve dashboard page
 app.use('/dashboard', require('./routes/dashboard.js'));
 
