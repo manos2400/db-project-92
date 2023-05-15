@@ -7,9 +7,7 @@ router.post("/", async (req, res) => {
     const { username, password } = req.body;
 
     if (!username || !password) {
-        return res.render('login', {
-            invalid: true
-        });
+        return res.status(401).send('Invalid credentials');
     }
 
     // Connect to MariaDB
@@ -31,12 +29,10 @@ router.post("/", async (req, res) => {
             req.session.school = {
                 id: schools[0].school_id
             };
-            return res.redirect('/dashboard');
+            return res.status(202).send("Success");
         } else {
             // Invalid credentials
-            return res.render('login', {
-                invalid: true
-            });
+            return res.status(401).send('Invalid credentials');
         }
     } catch (error) {
         console.error(error);
