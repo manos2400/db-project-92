@@ -35,6 +35,9 @@ app.use('/password', require('./routes/password.js'));
 // Serve dashboard page
 app.use('/dashboard', require('./routes/dashboard.js'));
 
+// Serve reservations page
+app.use('/reservations', require('./routes/reservations.js'));
+
 // Display the books page
 app.use('/books', require('./routes/books.js'));
 
