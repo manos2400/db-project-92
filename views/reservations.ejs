@@ -16,6 +16,8 @@
   <link rel="stylesheet" href="/css/Login-Form-Basic-icons.css">
   <link rel="stylesheet" href="/css/Soft-UI-Aside-Navbar.css">
   <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
+  <script src="https://unpkg.com/axios@1.4.0"></script>
+  <script src="https://unpkg.com/vue@next"></script>
 </head>
 
 <body>
@@ -53,7 +55,7 @@
       </thead>
       <tbody>
         <% reservations.forEach(book=> { %>
-        <tr>
+        <tr >
           <td>
             <%= book.title %>
           </td>
@@ -64,13 +66,13 @@
             <%= book.date_due.toISOString().split("T")[0] %>
           </td>
           <td>
-            <form name="acceptForm" method="POST" action="/reservation/accept">
+            <form name="acceptForm" method="POST" action="/reservations/manage/accept/<%=book.book_id%>/<%=book.user_id%>">
               <input type="hidden">
               <a class="btn btn-primary ms-md-2" role="button" href="javascript:document.acceptForm.submit();" style="--bs-btn-bg: #5dfd0d;--bs-btn-border-color: #0ead26;--bs-btn-hover-color: #000000;--bs-btn-hover-bg: #089627;--bs-btn-hover-border-color: #127d37;">Accept</a>
             </form>
           </td>
           <td>
-            <form name="denyForm" method="POST" action="/reservation/deny">
+            <form name="denyForm" method="POST" action="/reservations/manage/deny/<%=book.book_id%>/<%=book.user_id%>">
               <input type="hidden">
               <a class="btn btn-primary ms-md-2" role="button" href="javascript:document.denyForm.submit();" style="--bs-btn-bg: #ff1c1c;--bs-btn-border-color: #fc2f2f;--bs-btn-hover-color: #000000;--bs-btn-hover-bg: #962408;--bs-btn-hover-border-color: #7d1212;">Deny</a>
             </form>
