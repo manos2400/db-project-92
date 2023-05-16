@@ -38,6 +38,9 @@ app.use('/dashboard', require('./routes/dashboard.js'));
 // Serve reservations page
 app.use('/reservations', require('./routes/reservations.js'));
 
+// Serve loans page
+app.use('/loans', require('./routes/loans.js'));
+
 // Display the books page
 app.use('/books', require('./routes/books.js'));
 
