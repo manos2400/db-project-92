@@ -159,7 +159,7 @@ VALUES
 ("The Alchemist","Paulo Coelho"),
 ("The Color Purple","Alice Walker"),
 ("A Game of Thrones","George R.R. Martin"),
-("The Handmaid"s Tale","Margaret Atwood"),
+("The Handmaids Tale","Margaret Atwood"),
 ("The Picture of Dorian Gray","Oscar Wilde"),
 ("The Book Thief","Markus Zusak"),
 ("The Sun Also Rises","Ernest Hemingway"),
