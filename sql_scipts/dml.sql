@@ -172,7 +172,7 @@ VALUES
 ("To the Lighthouse","Virginia Woolf"),
 ("The Great Gatsby","F. Scott Fitzgerald"),
 ("The Odyssey","Homer"),
-("Harry Potter and the Sorcerer\"s Stone","J.K. Rowling"),
+("Harry Potter and the Sorcerers Stone","J.K. Rowling"),
 ("Harry Potter and the Chamber of Secrets","J.K. Rowling"),
 ("Harry Potter and the Prisoner of Azkaban","J.K. Rowling"),
 ("Harry Potter and the Goblet of Fire","J.K. Rowling"),
