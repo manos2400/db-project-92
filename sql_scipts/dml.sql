@@ -140,7 +140,7 @@ VALUES
 ("The Chronicles of Narnia","C.S. Lewis"),
 ("The Da Vinci Code","Dan Brown"),
 ("The Hobbit","J.R.R. Tolkien"),
-("The Hitchhiker"s Guide to the Galaxy","Douglas Adams"),
+("The Hitchhikers Guide to the Galaxy","Douglas Adams"),
 ("Gone Girl","Gillian Flynn"),
 ("The Book Thief","Markus Zusak"),
 ("Sapiens: A Brief History of Humankind","Yuval Noah Harari"),
