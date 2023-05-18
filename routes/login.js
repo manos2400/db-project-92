@@ -15,6 +15,7 @@ router.post("/", async (req, res) => {
 
     try {
         // Check credentials
+        /* TODO: Merge the queries */
         const rows = await connection.query(`SELECT * FROM users WHERE username = ? AND password = ?`, [username, password]);
         if (rows.length === 1) {
             // Successful login

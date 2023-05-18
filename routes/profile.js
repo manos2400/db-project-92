@@ -8,6 +8,7 @@ router.get("/", async (req, res) => {
     const connection = await pool.getConnection();
     let school, user;
     try {
+        /* TODO: Merge the queries */
         const rows = await connection.query(`SELECT * FROM schools WHERE id = ?;`, [req.session.school.id]);
         if (rows.length !== 0) {
             school = rows[0];

@@ -9,7 +9,6 @@ router.get("/", async (req, res) => {
     const connection = await pool.getConnection();
 
     let loans, reservations;
-    let activeLoansCount = 0;
     try {
         loans = await connection.query(`
             SELECT books.title, loans.date_out, loans.date_due, loans.date_in
@@ -23,9 +22,9 @@ router.get("/", async (req, res) => {
             INNER JOIN reservations r ON books.id = r.book_id
             WHERE r.user_id = ?;
             `, [req.session.user.id]);
-        const rows = await connection.query(`
-            SELECT * FROM loans WHERE user_id = ? AND date_in IS NULL;`, [req.session.user.id]);
-        activeLoansCount = rows.length;
+            const rows = await connection.query('CALL GetUserStats(?, @reservationCount, @loanCount, @activeLoanCount)', [req.session.user.id]);
+            const result = await connection.query('SELECT @reservationCount AS reservationCount, @loanCount AS loanCount, @activeLoanCount AS activeLoanCount');
+            var { reservationCount, loanCount, activeLoanCount } = result[0];
     } catch (error) {
         console.error(error);
         return res.send('Database error occurred');
@@ -38,7 +37,9 @@ router.get("/", async (req, res) => {
         session: req.session,
         loans,
         reservations,
-        activeLoansCount
+        reservationCount,
+        loanCount,
+        activeLoanCount
     });
 })
 
