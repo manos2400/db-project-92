@@ -14,16 +14,14 @@ router.get("/", async (req, res) => {
     let loans, oldLoans;
     try {
         loans = await connection.query(`
-            SELECT books.title, l.date_out, l.date_due, l.user_id, l.book_id
-            FROM books
-            INNER JOIN loans l ON books.id = l.book_id
-            WHERE l.school_id = ? AND l.date_in IS NULL;
-            `, [req.session.school.id]);
+            SELECT *
+            FROM loans_view
+            WHERE school_id = ? AND date_in IS NULL;
+        `, [req.session.school.id]);
         oldLoans = await connection.query(`
-            SELECT books.title, l.date_out, l.date_due, l.date_in, l.user_id, l.book_id
-            FROM books
-            INNER JOIN loans l ON books.id = l.book_id
-            WHERE l.school_id = ? AND l.date_in IS NOT NULL;
+            SELECT *
+            FROM loans_view
+            WHERE school_id = ? AND date_in IS NOT NULL;
         `, [req.session.school.id]);
     } catch (error) {
         console.error(error);

@@ -54,6 +54,7 @@
     <table id="reservations" class="table table-striped table-bordered" cellspacing="0" width="100%">
       <thead>
         <tr>
+          <th>User</th>
           <th>Book</th>
           <th>Date</th>
           <th>Date Due</th>
@@ -61,25 +62,28 @@
         </tr>
       </thead>
       <tbody>
-        <% reservations.forEach(book=> { %>
+        <% reservations.forEach(reservation=> { %>
         <tr >
           <td>
-            <%= book.title %>
+            <%= reservation.real_name %>
           </td>
           <td>
-            <%= book.date.toISOString().split("T")[0] %>
+            <%= reservation.title %>
           </td>
           <td>
-            <%= book.date_due.toISOString().split("T")[0] %>
+            <%= reservation.date.toISOString().split("T")[0] %>
           </td>
           <td>
-            <form name="acceptForm" method="POST" action="/reservations/manage/accept/<%=book.book_id%>/<%=book.user_id%>">
+            <%= reservation.date_due.toISOString().split("T")[0] %>
+          </td>
+          <td>
+            <form name="acceptForm" method="POST" action="/reservations/manage/accept/<%=reservation.book_id%>/<%=reservation.user_id%>">
               <input type="hidden">
               <a class="btn btn-primary ms-md-2" role="button" href="javascript:document.acceptForm.submit();" style="--bs-btn-bg: #5dfd0d;--bs-btn-border-color: #0ead26;--bs-btn-hover-color: #000000;--bs-btn-hover-bg: #089627;--bs-btn-hover-border-color: #127d37;">Accept</a>
             </form>
           </td>
           <td>
-            <form name="denyForm" method="POST" action="/reservations/manage/deny/<%=book.book_id%>/<%=book.user_id%>">
+            <form name="denyForm" method="POST" action="/reservations/manage/deny/<%=reservation.book_id%>/<%=reservation.user_id%>">
               <input type="hidden">
               <a class="btn btn-primary ms-md-2" role="button" href="javascript:document.denyForm.submit();" style="--bs-btn-bg: #ff1c1c;--bs-btn-border-color: #fc2f2f;--bs-btn-hover-color: #000000;--bs-btn-hover-bg: #962408;--bs-btn-hover-border-color: #7d1212;">Deny</a>
             </form>

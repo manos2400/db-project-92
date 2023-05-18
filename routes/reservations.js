@@ -13,12 +13,7 @@ router.get("/", async (req, res) => {
 
     let reservations;
     try {
-        reservations = await connection.query(`
-            SELECT books.title, r.date, r.date_due, r.user_id, r.book_id
-            FROM books
-            INNER JOIN reservations r ON books.id = r.book_id
-            WHERE r.school_id = ?;
-            `, [req.session.school.id]);
+        reservations = await connection.query(`SELECT * FROM reservations_view WHERE school_id = ?;`, [req.session.school.id]);
     } catch (error) {
         console.error(error);
         return res.status(500).send('Database error occurred');

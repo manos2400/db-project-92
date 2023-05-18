@@ -30,11 +30,11 @@ CREATE TABLE schools (
 
 CREATE TABLE books (
   id INT PRIMARY KEY AUTO_INCREMENT,
-  title VARCHAR(255) NOT NULL,
+  title VARCHAR(255) NOT NULL UNIQUE,
   publisher VARCHAR(90) NOT NULL,
   isbn VARCHAR(13) NOT NULL,
   pages INT NOT NULL,
-  description TEXT,
+  description VARCHAR(255) NOT NULL,
   picture VARCHAR(255),
   language VARCHAR(45),
   keywords VARCHAR(255),
@@ -43,7 +43,7 @@ CREATE TABLE books (
 
 CREATE TABLE authors (
   id INT PRIMARY KEY AUTO_INCREMENT,
-  name VARCHAR(90) NOT NULL
+  name VARCHAR(90) NOT NULL UNIQUE
 );
 
 CREATE TABLE categories (
@@ -52,7 +52,7 @@ CREATE TABLE categories (
 
 CREATE TABLE book_categories (
   book_id INT NOT NULL,
-  category VARCHAR(45) NOT NULL,
+  category VARCHAR(45) NOT NULL UNIQUE,
   PRIMARY KEY (book_id, category),
   CONSTRAINT bc_books FOREIGN KEY (book_id) REFERENCES books(id),
   CONSTRAINT bc_category FOREIGN KEY (category) REFERENCES categories(name)
@@ -117,3 +117,24 @@ CREATE TABLE reviews (
   CONSTRAINT rev_users FOREIGN KEY (user_id) REFERENCES users(id),
   CONSTRAINT rev_books FOREIGN KEY (book_id) REFERENCES books(id)
 );
+
+CREATE VIEW reservations_view AS
+SELECT u.real_name, books.title, r.date, r.date_due, r.user_id, r.book_id
+FROM books
+INNER JOIN reservations r ON books.id = r.book_id
+INNER JOIN users u on r.user_id = u.id;
+
+CREATE VIEW loans_view AS
+SELECT u.real_name, books.title , l.date_out, l.date_due, l.date_in, l.user_id, l.book_id
+FROM books
+INNER JOIN loans l ON books.id = l.book_id
+INNER JOIN users u on l.user_id = u.id;
+
+CREATE VIEW books_view AS
+SELECT books.*, GROUP_CONCAT(authors.name) AS authors
+FROM books
+INNER JOIN book_authors ON books.id = book_authors.book_id
+INNER JOIN authors ON book_authors.author_id = authors.id
+GROUP BY books.id;
+-- INNER JOIN book_categories bc on b.id = bc.book_id
+-- INNER JOIN categories c on bc.category = c.name
