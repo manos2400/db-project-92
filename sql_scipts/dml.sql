@@ -64,7 +64,7 @@ VALUES
 -- Insert Books
 INSERT INTO books (title, publisher, isbn, pages, description, picture, language, keywords, loans)
 VALUES
-  ("To Kill a Mockingbird", "HarperCollins", "9780061120084", 336, "A classic novel depicting racial inequality and justice in the American South", "to_kill_a_mockingbird.jpg", "English", "racial inequality, justice", NULL),
+  ("To Kill a Mockingbird", "HarperCollins", "9780061120084", 336, "A classic novel depicting racial inequality and justice in the American South", "https://github.com/manos2400/db-project-92/blob/main/public/img/to_kill_a_mockingbird.jpg", "English", "racial inequality, justice", NULL),
   ("1984", "Penguin Books", "9780451524935", 328, "A dystopian novel set in a totalitarian society where independent thinking is suppressed.", "1984.jpg", "English", "dystopia, surveillance", NULL),
   ("The Great Gatsby", "Scribner", "9780743273565", 180, "A tale of wealth, love, and the pursuit of the American Dream set in the Jazz Age.", "the_great_gatsby.jpg", "English", "wealth, love, American Dream", NULL),
   ("Pride and Prejudice", "Penguin Classics", "9780141439518", 432, "A romantic novel exploring the themes of love, social class, and overcoming prejudice.", "pride_and_prejudice.jpg", "English", "romance, social class, prejudice", NULL),
