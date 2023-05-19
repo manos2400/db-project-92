@@ -119,13 +119,13 @@ CREATE TABLE reviews (
 );
 
 CREATE VIEW reservations_view AS
-SELECT u.real_name, books.title, r.date, r.date_due, r.user_id, r.book_id
+SELECT u.real_name, books.title, r.date, r.date_due, r.user_id, r.book_id, r.school_id
 FROM books
 INNER JOIN reservations r ON books.id = r.book_id
 INNER JOIN users u on r.user_id = u.id;
 
 CREATE VIEW loans_view AS
-SELECT u.real_name, books.title , l.date_out, l.date_due, l.date_in, l.user_id, l.book_id
+SELECT u.real_name, books.title , l.date_out, l.date_due, l.date_in, l.user_id, l.book_id, l.school_id
 FROM books
 INNER JOIN loans l ON books.id = l.book_id
 INNER JOIN users u on l.user_id = u.id;
