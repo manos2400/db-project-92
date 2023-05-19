@@ -8,14 +8,12 @@ router.get("/", async (req, res) => {
     const connection = await pool.getConnection();
     let school, user;
     try {
-        /* TODO: Merge the queries */
         const rows = await connection.query(`SELECT * FROM schools WHERE id = ?;`, [req.session.school.id]);
         if (rows.length !== 0) {
             school = rows[0];
         } else {
             throw new Error('School not found');
         }
-
         const users = await connection.query(`SELECT * FROM users WHERE id = ?;`, [req.session.user.id]);
         if (rows.length !== 0) {
             user = users[0];
@@ -27,7 +25,7 @@ router.get("/", async (req, res) => {
         console.error(error);
         return res.status(503).send('Database is currently unavailable.');
     } finally {
-        connection.release();
+        await connection.release();
     }
 
     // Render the profile view and pass session information as locals

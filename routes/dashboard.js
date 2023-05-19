@@ -18,7 +18,7 @@ router.get("/", async (req, res) => {
         console.error(error);
         return res.send('Database error occurred');
     } finally {
-        connection.release();
+        await connection.release();
     }
 
     // Render the dashboard view and pass session information as locals

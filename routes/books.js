@@ -25,7 +25,7 @@ router.get("/", async (req, res) => {
                 console.error(error);
                 return res.status(500).send('Internal Server Error');
             } finally {
-                connection.release();
+                await connection.release();
             }
 
             // Render the books view and pass the fetched books as locals

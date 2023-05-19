@@ -18,7 +18,7 @@ router.get("/", async (req, res) => {
         console.error(error);
         return res.status(500).send('Database error occurred');
     } finally {
-        connection.release();
+        await connection.release();
     }
 
     // Render the dashboard view and pass session information as locals
@@ -37,17 +37,17 @@ manageRouter.post("/accept/:book_id/:user_id", async (req, res) => {
     const connection = await pool.getConnection();
     const { book_id, user_id } = req.params;
     try {
-        const reservations = await connection.query(`
+        await connection.query(`
             DELETE FROM reservations WHERE school_id = ? AND book_id = ? AND user_id = ?;
             `, [req.session.school.id, book_id, user_id]);
-        const loans = await connection.query(`
+        await connection.query(`
             INSERT INTO loans (school_id, book_id, user_id, date_out, date_due)
             VALUES (?, ?, ?, NOW(), DATE_ADD(NOW(), INTERVAL 14 DAY));`, [req.session.school.id, book_id, user_id]);
     } catch (error) {
         console.error(error);
         return res.status(500).send('Database error occurred');
     } finally {
-        connection.release();
+        await connection.release();
     }
 
     // Render the dashboard view and pass session information as locals
@@ -62,7 +62,7 @@ manageRouter.post("/deny/:book_id/:user_id", async (req, res) => {
     const connection = await pool.getConnection();
     const { book_id, user_id } = req.params;
     try {
-        const reservations = await connection.query(`
+        await connection.query(`
             DELETE FROM reservations WHERE school_id = ? AND book_id = ? AND user_id = ?;
             `, [req.session.school.id, book_id, user_id]);
     } catch (error) {

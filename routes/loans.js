@@ -27,7 +27,7 @@ router.get("/", async (req, res) => {
         console.error(error);
         return res.status(500).send('Database error occurred');
     } finally {
-        connection.release();
+        await connection.release();
     }
 
     // Render the dashboard view and pass session information as locals
@@ -47,7 +47,7 @@ manageRouter.post("/return/:book_id/:user_id", async (req, res) => {
     const connection = await pool.getConnection();
     const { book_id, user_id } = req.params;
     try {
-        const loans = await connection.query(`
+        await connection.query(`
             UPDATE loans
             SET date_in = NOW()
             WHERE school_id = ? AND book_id = ? AND user_id = ?;`, [req.session.school.id, book_id, user_id]);
