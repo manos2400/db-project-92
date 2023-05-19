@@ -37,6 +37,7 @@
                 <a class="nav-link" href="/reservations">Reservations</a>
                 <a class="nav-link" href="/loans">Loans</a>
                 <a class="nav-link" href="/users">Users</a>
+              </div>
             </li>
           <% } %>
           <li class="nav-item"><a class="nav-link" href="/books">Books</a></li>
@@ -51,7 +52,7 @@
   </nav><!-- End: Navbar Right Links -->
   <div class="container py-4 py-xl-5">
     <h4>Loans</h4>
-    <table id="loans" class="table table-striped table-bordered" cellspacing="0" width="100%">
+    <table id="loans" class="table table-striped table-bordered">
       <thead>
         <tr>
           <th>Book</th>
@@ -75,7 +76,7 @@
           <td>
             <form name="returnForm" method="POST" action="/loans/manage/return/<%=book.book_id%>/<%=book.user_id%>">
               <input type="hidden">
-              <a class="btn btn-primary ms-md-2" role="button" href="javascript:document.returnForm.submit();" style="--bs-btn-bg: #5dfd0d;--bs-btn-border-color: #0ead26;--bs-btn-hover-color: #000000;--bs-btn-hover-bg: #089627;--bs-btn-hover-border-color: #127d37;">Return</a>
+              <button class="btn btn-primary ms-md-2" role="button" type="submit" >Return</button>
             </form>
           </td>
           </tr>
@@ -85,7 +86,7 @@
   </div>
   <div class="container py-4 py-xl-5">
     <h4>Old Loans</h4>
-    <table id="oldLoans" class="table table-striped table-bordered" cellspacing="0" width="100%">
+    <table id="oldLoans" class="table table-striped table-bordered">
       <thead>
         <tr>
           <th>Book</th>
