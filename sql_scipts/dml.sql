@@ -208,3 +208,44 @@ VALUES
 -- TODO: Insert categories
 INSERT INTO categories (title, category)
 VALUES
+
+-- Link schools to students. 10 students per school assuming students start from id 6
+INSERT INTO school_users(school_id, user_id)
+VALUES
+    (1, 6),
+    (1, 7),
+    (1, 8),
+    (1, 9),
+    (1, 10),
+    (1, 11),
+    (1, 12),
+    (1, 13),
+    (1, 14),
+    (1, 15),
+    (2, 16),
+    (2, 17),
+    (2, 18),
+    (2, 19),
+    (2, 20),
+    (2, 21),
+    (2, 22),
+    (2, 23),
+    (2, 24),
+    (2, 25),
+    (3, 26),
+    (3, 27),
+    (3, 28),
+    (3, 29),
+    (3, 30),
+    (3, 31),
+    (3, 32),
+    (3, 33),
+    (3, 34),
+    (3, 35);
+
+-- Link schools to managers. 1 manager per school assuming managers start from id 1
+INSERT INTO school_users(school_id, user_id)
+VALUES
+    (1, 1),
+    (2, 2),
+    (3, 3);
