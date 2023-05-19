@@ -15,20 +15,23 @@ router.post("/", async (req, res) => {
 
     try {
         // Check credentials
-        /* TODO: Merge the queries */
-        const rows = await connection.query(`SELECT * FROM users WHERE username = ? AND password = ?`, [username, password]);
+        const rows = await connection.query(`
+            SELECT  su.school_id AS school_id, u.id AS user_id, u.type AS user_type
+            FROM users u
+            INNER JOIN school_users su ON u.id = su.user_id
+            INNER JOIN schools s ON su.school_id = s.id
+            WHERE u.username = ? AND u.password = ?
+        `, [username, password]);
         if (rows.length === 1) {
             // Successful login
             // Cache important user information in session
             req.session.loggedIn = true;
             req.session.user = {
-                type: rows[0].type,
-                id: rows[0].id
+                type: rows[0].user_type,
+                id: rows[0].user_id
             }
-            // Get school information
-            const schools = await connection.query(`SELECT * FROM school_users WHERE user_id = ?;`, [req.session.user.id]);
             req.session.school = {
-                id: schools[0].school_id
+                id: rows[0].school_id
             };
             return res.status(202).send("Success");
         } else {
