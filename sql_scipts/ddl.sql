@@ -47,15 +47,16 @@ CREATE TABLE authors (
 );
 
 CREATE TABLE categories (
-  name VARCHAR(45) PRIMARY KEY NOT NULL
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  name VARCHAR(45) NOT NULL UNIQUE
 );
 
 CREATE TABLE book_categories (
   book_id INT NOT NULL,
-  category VARCHAR(45) NOT NULL UNIQUE,
-  PRIMARY KEY (book_id, category),
+  categor_id INT NOT NULL,
+  PRIMARY KEY (book_id, category_id),
   CONSTRAINT bc_books FOREIGN KEY (book_id) REFERENCES books(id),
-  CONSTRAINT bc_category FOREIGN KEY (category) REFERENCES categories(name)
+  CONSTRAINT bc_category FOREIGN KEY (category_id) REFERENCES categories(id)
 );
 
 CREATE TABLE book_authors (
@@ -131,10 +132,15 @@ INNER JOIN loans l ON books.id = l.book_id
 INNER JOIN users u on l.user_id = u.id;
 
 CREATE VIEW books_view AS
-SELECT books.*, GROUP_CONCAT(authors.name) AS authors
+SELECT books.*, GROUP_CONCAT(authors.name) AS authors, GROUP_CONCAT(c.name) AS categories
 FROM books
 INNER JOIN book_authors ON books.id = book_authors.book_id
 INNER JOIN authors ON book_authors.author_id = authors.id
+INNER JOIN book_categories bc on books.id = bc.book_id
+INNER JOIN categories c on bc.category_id = c.id
 GROUP BY books.id;
--- INNER JOIN book_categories bc on b.id = bc.book_id
--- INNER JOIN categories c on bc.category = c.name
+
+CREATE VIEW school_books_view AS
+SELECT books.*, sb.school_id, sb.quantity, sb.available
+FROM books_view books
+INNER JOIN school_books sb on books.id = sb.book_id;
