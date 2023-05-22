@@ -17,6 +17,8 @@ app.use(session({
 
 // Parse request bodies
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use('/static', express.static('book_covers'));
 app.use('/', express.static('public'));
 // Serve login page
 app.get('/', (req, res) => {
