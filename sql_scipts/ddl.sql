@@ -132,7 +132,7 @@ INNER JOIN loans l ON books.id = l.book_id
 INNER JOIN users u on l.user_id = u.id;
 
 CREATE VIEW books_view AS
-SELECT books.*, GROUP_CONCAT(authors.name) AS authors, GROUP_CONCAT(c.name) AS categories
+SELECT books.*, GROUP_CONCAT(DISTINCT authors.name) AS authors, GROUP_CONCAT(DISTINCT c.name) AS categories
 FROM books
 INNER JOIN book_authors ON books.id = book_authors.book_id
 INNER JOIN authors ON book_authors.author_id = authors.id
