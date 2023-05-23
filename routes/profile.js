@@ -9,13 +9,13 @@ router.get("/", async (req, res) => {
         }
 
         const connection = await pool.getConnection();
-        const [[school]] = await connection.query(`SELECT * FROM schools WHERE id = ?;`, [req.session.school.id]);
-        if (!school) {
+        const school = await connection.query(`SELECT * FROM schools WHERE id = ?;`, [req.session.school.id]);
+        if (!school[0]) {
             throw new Error('School not found');
         }
 
-        const [[user]] = await connection.query(`SELECT * FROM users WHERE id = ?;`, [req.session.user.id]);
-        if (!user) {
+        const user = await connection.query(`SELECT * FROM users WHERE id = ?;`, [req.session.user.id]);
+        if (!user[0]) {
             throw new Error('User not found');
         }
 
@@ -23,8 +23,8 @@ router.get("/", async (req, res) => {
 
         return res.render('profile', {
             session: req.session,
-            user,
-            school
+            user: user[0],
+            school: school[0]
         });
     } catch (error) {
         console.error(error);
