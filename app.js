@@ -6,6 +6,7 @@ require('dotenv').config();
 // Create the server
 const app = express();
 app.set('view engine', 'ejs');
+app.set('views', './views');
 
 // Use sessions for tracking login state
 app.use(session({
@@ -18,7 +19,7 @@ app.use(session({
 // Parse request bodies
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use('/static', express.static('book_covers'));
+app.use('/static', express.static('public/book_covers'));
 app.use('/', express.static('public'));
 // Serve login page
 app.get('/', (req, res) => {
@@ -55,6 +56,7 @@ app.post('/logout', (req, res) => {
     return res.redirect('/');
 });
 
+// Display the 404 page
 app.use((req, res) => { 
     return res.status(404).render('404.ejs', {
         session: req.session
@@ -62,6 +64,7 @@ app.use((req, res) => {
  })
 
 // Start the server
-app.listen(3000, () => {
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
     console.log('Server started on http://localhost:3000');
 });
