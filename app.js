@@ -55,6 +55,12 @@ app.post('/logout', (req, res) => {
     return res.redirect('/');
 });
 
+app.use((req, res) => { 
+    return res.status(404).render('404.ejs', {
+        session: req.session
+    })
+ })
+
 // Start the server
 app.listen(3000, () => {
     console.log('Server started on http://localhost:3000');
