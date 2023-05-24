@@ -22,34 +22,7 @@
 </head>
 
 <body>
-  <!-- Start: Navbar Right Links -->
-  <nav class="navbar navbar-light navbar-expand-md py-3">
-    <div class="container"><a class="navbar-brand d-flex align-items-center" href="#"><span class="bs-icon-sm bs-icon-rounded bs-icon-primary d-flex justify-content-center align-items-center me-2 bs-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -32 576 576" width="1em" height="1em" fill="currentColor">
-            <path d="M144.3 32.04C106.9 31.29 63.7 41.44 18.6 61.29c-11.42 5.026-18.6 16.67-18.6 29.15l0 357.6c0 11.55 11.99 19.55 22.45 14.65c126.3-59.14 219.8 11 223.8 14.01C249.1 478.9 252.5 480 256 480c12.4 0 16-11.38 16-15.98V80.04c0-5.203-2.531-10.08-6.781-13.08C263.3 65.58 216.7 33.35 144.3 32.04zM557.4 61.29c-45.11-19.79-88.48-29.61-125.7-29.26c-72.44 1.312-118.1 33.55-120.9 34.92C306.5 69.96 304 74.83 304 80.04v383.1C304 468.4 307.5 480 320 480c3.484 0 6.938-1.125 9.781-3.328c3.925-3.018 97.44-73.16 223.8-14c10.46 4.896 22.45-3.105 22.45-14.65l.0001-357.6C575.1 77.97 568.8 66.31 557.4 61.29z"></path>
-          </svg></span><span class="ms-2 font-weight-bolder">School Library</span></a><button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-2"><span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
-      <div class="collapse navbar-collapse" id="navcol-2">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link active" href="/dashboard">Dashboard</a></li>
-          <% if( session.user.type === "manager") {%>
-            <li class="nav-item dropdown">
-              <a class="nav-link" >Management</a>
-              <div class="dropdown-content">
-                <a class="nav-link" href="/reservations">Reservations</a>
-                <a class="nav-link" href="/loans">Loans</a>
-                <a class="nav-link" href="/users">Users</a>
-              </div>
-            </li>
-          <% } %>
-          <li class="nav-item"><a class="nav-link" href="/books">Books</a></li>
-          <li class="nav-item"><a class="nav-link" href="/profile">Profile</a></li>
-        </ul>
-        <form name="logoutForm" method="POST" action="/logout">
-          <input type="hidden">
-          <a class="btn btn-primary ms-md-2" role="button" href="javascript:document.logoutForm.submit();" style="--bs-btn-bg: #fd800d;--bs-btn-border-color: #fd800d;--bs-btn-hover-color: #fff;--bs-btn-hover-bg: #d7610b;--bs-btn-hover-border-color: #ca4f0a;">Logout</a>
-        </form>
-      </div>
-    </div>
-  </nav><!-- End: Navbar Right Links -->
+  <%- include("includes/navbar.ejs") %>
   <div class="container py-4 py-xl-5">
     <h4>Reservations</h4>
     <table id="reservations" class="table table-striped table-bordered" >
