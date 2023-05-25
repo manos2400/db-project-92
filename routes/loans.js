@@ -3,7 +3,7 @@ const pool = require('../database.js');
 
 const router = express.Router()
 const manageRouter = express.Router()
-router.get("/", async (req, res) => {
+router.get("/:user_real_name?", async (req, res) => {
     if (!req.session.loggedIn) { return res.redirect('/'); }
     if (req.session.user.type !== 'manager') { 
         return res.status(403).redirect('/dashboard'); 
@@ -13,7 +13,20 @@ router.get("/", async (req, res) => {
 
     let loans, oldLoans;
     try {
-        loans = await connection.query(`
+        if(req.params.user_real_name) {
+            const real_name = req.params.user_real_name.replace('&', ' ');
+            loans = await connection.query(`
+            SELECT *
+            FROM loans_view
+            WHERE school_id = ? AND date_in IS NULL AND real_name = ?;
+        `, [req.session.school.id, real_name]);
+        oldLoans = await connection.query(`
+            SELECT *
+            FROM loans_view
+            WHERE school_id = ? AND date_in IS NOT NULL AND real_name = ?;
+        `, [req.session.school.id, real_name]);
+        } else {
+            loans = await connection.query(`
             SELECT *
             FROM loans_view
             WHERE school_id = ? AND date_in IS NULL;
@@ -23,6 +36,7 @@ router.get("/", async (req, res) => {
             FROM loans_view
             WHERE school_id = ? AND date_in IS NOT NULL;
         `, [req.session.school.id]);
+        }
     } catch (error) {
         console.error(error);
         return res.status(500).send('Database error occurred');

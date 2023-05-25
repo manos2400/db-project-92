@@ -3,7 +3,7 @@ const pool = require('../database.js');
 
 const router = express.Router()
 const manageRouter = express.Router()
-router.get("/", async (req, res) => {
+router.get("/:user_real_name?", async (req, res) => {
     if (!req.session.loggedIn) { return res.redirect('/'); }
     if (req.session.user.type !== 'manager') { 
         return res.status(403).redirect('/dashboard'); 
@@ -13,7 +13,12 @@ router.get("/", async (req, res) => {
 
     let reservations;
     try {
-        reservations = await connection.query(`SELECT * FROM reservations_view WHERE school_id = ?;`, [req.session.school.id]);
+        if (req.params.user_real_name) {
+            const real_name = req.params.user_real_name.replace('&', ' ');
+            reservations = await connection.query(`SELECT * FROM reservations_view WHERE school_id = ? AND real_name = ?;`, [req.session.school.id, real_name]);
+        } else {
+            reservations = await connection.query(`SELECT * FROM reservations_view WHERE school_id = ?;`, [req.session.school.id]);
+        }
     } catch (error) {
         console.error(error);
         return res.status(500).send('Database error occurred');
