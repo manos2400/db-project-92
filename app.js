@@ -24,9 +24,7 @@ app.use('/', express.static('public'));
 // Serve login page
 app.get('/', (req, res) => {
     if (req.session.loggedIn) { return res.redirect('/dashboard'); }
-    return res.render('login',{
-        invalid: false
-    });
+    return res.render('login');
 });
 
 // Process login form
