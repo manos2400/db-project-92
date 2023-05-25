@@ -1,5 +1,6 @@
 const express = require("express");
 const pool = require("../database.js");
+const e = require("express");
 
 const router = express.Router();
 
@@ -9,18 +10,40 @@ router.get("/", async (req, res) => {
       return res.redirect("/");
     }
     const connection = await pool.getConnection();
-    const books = await connection.query(
-      `SELECT id, picture FROM school_books_view WHERE school_id = ?;`,
-      [req.session.school.id]
-    );
+    let books;
+    if(req.query.title) {
+      books = await connection.query(
+        `SELECT id, picture FROM school_books_view WHERE school_id = ? AND title LIKE ?;`,
+        [req.session.school.id, `%${req.query.title}%`]
+      );
+    } else if(req.query.author) {
+      books = await connection.query(
+        `SELECT id, picture FROM school_books_view WHERE school_id = ? AND authors LIKE ?;`,
+        [req.session.school.id, `%${req.query.author}%`]
+      );
+    } else if(req.query.category) {
+      books = await connection.query(
+        `SELECT id, picture FROM school_books_view WHERE school_id = ? AND categories LIKE ?;`,
+        [req.session.school.id, `%${req.query.category}%`]
+      );
+    } else {
+      books = await connection.query(
+        `SELECT id, picture FROM school_books_view WHERE school_id = ?;`,
+        [req.session.school.id]
+      );
+    }
+
+
     if (!books) {
       throw new Error("No books found");
     }
+    const categories = await connection.query(`SELECT name FROM categories;`);
     await connection.release();
 
     return res.render("books", {
       session: req.session,
       books,
+      categories
     });
   } catch (error) {
     console.error(error);

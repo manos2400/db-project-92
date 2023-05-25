@@ -16,12 +16,30 @@
   <link rel="stylesheet" href="/css/Soft-UI-Aside-Navbar.css">
   <link rel="stylesheet" href="/css/dropdown.css">
   <link rel="stylesheet" href="/css/dialog.css">
+  <link rel="stylesheet" href="/css/input.css">
   <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
   <script src="https://unpkg.com/axios@1.4.0"></script>
   <script src="https://unpkg.com/vue@next"></script>
 <body>
   <%- include("includes/navbar.ejs") %>
   <div class="container" id="app">
+    <br>
+    <div class="form-inline">
+        <form @submit.prevent="search('title')">
+        <input type="text" v-model="searchTerm.title" class="input" @keyup.enter="search('title')" placeholder="Title">
+        </form>
+        <form @submit.prevent="search('author')">
+            <input type="text" v-model="searchTerm.author" class="input" @keyup.enter="search('author')" placeholder="Author">
+        </form>
+        <form @submit.prevent="search('category')">
+            <select class="input" v-model="searchTerm.category" @change="search('category')">
+                <option selected disabled>Category</option>
+                <% categories.forEach(category => { %>
+                    <option value="<%= category.name %>"><%= category.name %></option>
+                <% }) %>
+              </select>
+        </form>
+    </div>
     <div class="main-body">
         <div class="books">
         <% books.forEach(book => {%>
@@ -147,7 +165,12 @@
         return {
             book: null,
             panelClass: "dialog-container hidden",
-            message: null
+            message: null,
+            searchTerm: {
+                title: null,
+                author: null,
+                category: "Category"
+            },
         };
       },
       methods: {
@@ -178,6 +201,17 @@
             .catch(error => {
                 this.message = error.response.data;
             });
+        },
+        search(type) {
+            let name;
+            if (type === 'title') {
+                name = this.searchTerm.title.replace(' ', '%20');
+            } else if (type === 'author') {
+                name = this.searchTerm.author.replace(' ', '%20');
+            } else if (type === 'category') {
+                name = this.searchTerm.category.replace(' ', '%20');
+            }
+            window.location.href = `/books?${type}=${name}`;
         }
       }
     });
