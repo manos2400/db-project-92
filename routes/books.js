@@ -64,6 +64,11 @@ router.post("/reserve/:book_id", async (req, res) => {
         if (reservation.length > 0) {
             return res.status(403).send('You have already reserved this book.');
         }
+        // Check if the user has delayed books
+        const loans = await connection.query(`SELECT * FROM loans WHERE school_id = ? AND book_id = ? AND user_id = ? AND date_due < NOW();`, [req.session.school.id, book_id, req.session.user.id]);
+        if (loans.length > 0) {
+            return res.status(403).send('You have not returned a book in time.');
+        }
         // Check if the user has reached the maximum number of reservations
         const reservations = await connection.query(`SELECT * FROM reservations WHERE school_id = ? AND user_id = ? AND WEEK(date) = WEEK(NOW());`, [req.session.school.id, req.session.user.id]);
         switch (req.session.user.type) {
