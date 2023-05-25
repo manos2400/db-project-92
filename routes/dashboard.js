@@ -28,7 +28,8 @@ router.get("/", async (req, res) => {
         reservations,
         reservationCount,
         loanCount,
-        activeLoanCount
+        activeLoanCount,
+        reviewCount
     });
 })
 
