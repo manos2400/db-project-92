@@ -3,7 +3,7 @@ const pool = require('../database.js');
 
 const router = express.Router()
 const manageRouter = express.Router()
-router.get("/:user_real_name?", async (req, res) => {
+router.get("/", async (req, res) => {
     if (!req.session.loggedIn) { return res.redirect('/'); }
     if (req.session.user.type !== 'manager') { 
         return res.status(403).redirect('/dashboard'); 
@@ -13,18 +13,17 @@ router.get("/:user_real_name?", async (req, res) => {
 
     let loans, oldLoans;
     try {
-        if(req.params.user_real_name) {
-            const real_name = req.params.user_real_name.replace('&', ' ');
+        if(req.query.name) {
             loans = await connection.query(`
             SELECT *
             FROM loans_view
             WHERE school_id = ? AND date_in IS NULL AND real_name = ?;
-        `, [req.session.school.id, real_name]);
+        `, [req.session.school.id, req.query.name]);
         oldLoans = await connection.query(`
             SELECT *
             FROM loans_view
             WHERE school_id = ? AND date_in IS NOT NULL AND real_name = ?;
-        `, [req.session.school.id, real_name]);
+        `, [req.session.school.id, req.query.name]);
         } else {
             loans = await connection.query(`
             SELECT *

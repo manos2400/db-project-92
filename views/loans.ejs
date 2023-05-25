@@ -108,8 +108,8 @@
       },
       methods: {
         search() {
-          const name = this.searchTerm.replace(' ', '&');
-          window.location.href = '/loans/' + name;
+          const name = this.searchTerm.replace(' ', '%20');
+          window.location.href = '/loans?name=' + name;
         }
       }
     });

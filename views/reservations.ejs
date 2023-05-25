@@ -86,8 +86,8 @@
       },
       methods: {
         search() {
-          const name = this.searchTerm.replace(' ', '&');
-          window.location.href = '/reservations/' + name;
+          const name = this.searchTerm.replace(' ', '%20');
+          window.location.href = '/reservations?name=' + name;
         }
       }
     });
