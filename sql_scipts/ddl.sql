@@ -53,7 +53,7 @@ CREATE TABLE categories (
 
 CREATE TABLE book_categories (
   book_id INT NOT NULL,
-  categor_id INT NOT NULL,
+  category_id INT NOT NULL,
   PRIMARY KEY (book_id, category_id),
   CONSTRAINT bc_books FOREIGN KEY (book_id) REFERENCES books(id),
   CONSTRAINT bc_category FOREIGN KEY (category_id) REFERENCES categories(id)
@@ -101,6 +101,7 @@ CREATE TABLE reservations (
   user_id INT NOT NULL,
   book_id INT NOT NULL,
   school_id INT NOT NULL,
+  waited BOOLEAN,
   date DATE NOT NULL,
   date_due DATE NOT NULL,
   PRIMARY KEY (user_id, book_id, school_id),
@@ -144,3 +145,36 @@ CREATE VIEW school_books_view AS
 SELECT books.*, sb.school_id, sb.quantity, sb.available
 FROM books_view books
 INNER JOIN school_books sb on books.id = sb.book_id;
+
+-- Procs
+PROCEDURE `GetUserStats`(IN `userId` INT, OUT `reservationCount` INT, OUT `loanCount` INT, OUT `activeLoanCount` INT)
+BEGIN
+    SELECT COUNT(*) INTO reservationCount
+    FROM reservations
+    WHERE user_id = userId;
+    
+    SELECT COUNT(*) INTO loanCount
+    FROM loans
+    WHERE user_id = userId;
+    
+    SELECT COUNT(*) INTO activeLoanCount
+    FROM loans
+    WHERE user_id = userId AND date_in IS NULL;
+END
+
+-- Triggers
+CREATE TRIGGER `new_reservation` AFTER INSERT ON `school_books` 
+FOR EACH ROW 
+BEGIN 
+UPDATE school_books 
+SET available = available - 1 
+WHERE book_id = NEW.book_id; 
+END 
+
+CREATE TRIGGER `unwait_reservations` AFTER UPDATE ON `school_books` 
+FOR EACH ROW 
+BEGIN 
+IF NEW.available > 0 THEN UPDATE reservations 
+SET waited = FALSE, date = NOW(), date_due = DATE_ADD(NOW(), INTERVAL 7 DAY) 
+WHERE book_id = NEW.book_id AND school_id = NEW.school_id; END IF; 
+END
