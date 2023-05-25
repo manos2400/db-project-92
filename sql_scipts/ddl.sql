@@ -1,4 +1,3 @@
--- Last Edited: Manos - 28/04
 CREATE DATABASE IF NOT EXISTS school_library_92;
 
 USE school_library_92;
