@@ -11,9 +11,9 @@ router.get("/", async (req, res) => {
     try {
         var loans = await connection.query(`SELECT * FROM loans_view WHERE user_id = ?;`, [req.session.user.id]);
         var reservations = await connection.query(`SELECT * FROM reservations_view WHERE user_id = ?;`, [req.session.user.id]);
-        await connection.query('CALL GetUserStats(?, @reservationCount, @loanCount, @activeLoanCount)', [req.session.user.id]);
-        const result = await connection.query('SELECT @reservationCount AS reservationCount, @loanCount AS loanCount, @activeLoanCount AS activeLoanCount');
-        var { reservationCount, loanCount, activeLoanCount } = result[0];
+        await connection.query('CALL GetUserStats(?, @reservationCount, @loanCount, @activeLoanCount, @reviewCount)', [req.session.user.id]);
+        const result = await connection.query('SELECT @reservationCount AS reservationCount, @loanCount AS loanCount, @activeLoanCount AS activeLoanCount, @reviewCount AS reviewCount;');
+        var { reservationCount, loanCount, activeLoanCount, reviewCount } = result[0];
     } catch (error) {
         console.error(error);
         return res.send('Database error occurred');

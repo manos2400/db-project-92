@@ -148,7 +148,7 @@ INNER JOIN school_books sb on books.id = sb.book_id;
 
 -- Procs
 DELIMITER //
-CREATE PROCEDURE `GetUserStats`(IN `userId` INT, OUT `reservationCount` INT, OUT `loanCount` INT, OUT `activeLoanCount` INT)
+CREATE PROCEDURE `GetUserStats`(IN `userId` INT, OUT `reservationCount` INT, OUT `loanCount` INT, OUT `activeLoanCount` INT, OUT `reviewCount` INT)
 BEGIN
     SELECT COUNT(*) INTO reservationCount
     FROM reservations
@@ -161,6 +161,10 @@ BEGIN
     SELECT COUNT(*) INTO activeLoanCount
     FROM loans
     WHERE user_id = userId AND date_in IS NULL;
+
+    SELECT COUNT(*) INTO reviewCount
+    FROM reviews
+    WHERE user_id = userId;
 END //
 DELIMITER ;
 
