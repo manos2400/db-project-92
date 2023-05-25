@@ -119,8 +119,9 @@ CREATE TABLE reviews (
   CONSTRAINT rev_books FOREIGN KEY (book_id) REFERENCES books(id)
 );
 
+-- Views
 CREATE VIEW reservations_view AS
-SELECT u.real_name, books.title, r.date, r.date_due, r.user_id, r.book_id, r.school_id
+SELECT u.real_name, books.title, r.date, r.waited, r.date_due, r.user_id, r. , r.book_id, r.school_id
 FROM books
 INNER JOIN reservations r ON books.id = r.book_id
 INNER JOIN users u on r.user_id = u.id;

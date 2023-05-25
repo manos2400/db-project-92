@@ -69,6 +69,8 @@
           <th>Book</th>
           <th>Date</th>
           <th>Date Due</th>
+          <th>Status</th>
+          <th>Manage</th>
         </tr>
       </thead>
       <tbody>
@@ -83,6 +85,20 @@
           <td>
             <%= book.date_due.toISOString().split("T")[0] %>
           </td>
+          <% if (book.waited) {%>
+          <td>
+            <span class="badge bg-danger">Waiting</span>
+          </td>
+          <% } else {%>
+          <td>
+            <span class="badge bg-success">Active</span>
+          </td>
+          <% } %>
+          <td>
+            <form name="cancelForm" method="POST" action="/reservations/manage/cancel/<%=book.book_id%>">
+              <input type="hidden">
+              <button class="btn btn-danger" role="button" type="submit" >Cancel</button>
+            </form>
         </tr>
         <% }); %>
       </tbody>

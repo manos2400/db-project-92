@@ -75,4 +75,23 @@ manageRouter.post("/deny/:book_id/:user_id", async (req, res) => {
     // Render the dashboard view and pass session information as locals
     return res.status(200).redirect('/reservations');
 });
+manageRouter.post("/cancel/:book_id", async (req, res) => {
+    if (!req.session.loggedIn) { return res.redirect('/'); }
+    // Retrieve session information
+    const connection = await pool.getConnection();
+    const { book_id } = req.params;
+    try {
+        await connection.query(`
+            DELETE FROM reservations WHERE school_id = ? AND book_id = ? AND user_id = ?;
+            `, [req.session.school.id, book_id, req.session.user.id]);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send('Database error occurred');
+    } finally {
+        connection.release();
+    }
+
+    // Render the dashboard view and pass session information as locals
+    return res.status(200).redirect('/dashboard');
+});
 module.exports = router;
