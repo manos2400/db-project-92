@@ -14,7 +14,7 @@ router.get("/", async (req, res) => {
     let reservations;
     try {
         if (req.query.name) {
-            reservations = await connection.query(`SELECT * FROM reservations_view WHERE school_id = ? AND real_name = ?;`, [req.session.school.id, req.query.name]);
+            reservations = await connection.query(`SELECT * FROM reservations_view WHERE school_id = ? AND real_name LIKE ?;`, [req.session.school.id, `%${req.query.name}%`]);
         } else {
             reservations = await connection.query(`SELECT * FROM reservations_view WHERE school_id = ?;`, [req.session.school.id]);
         }

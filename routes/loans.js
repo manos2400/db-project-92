@@ -17,13 +17,13 @@ router.get("/", async (req, res) => {
             loans = await connection.query(`
             SELECT *
             FROM loans_view
-            WHERE school_id = ? AND date_in IS NULL AND real_name = ?;
-        `, [req.session.school.id, req.query.name]);
+            WHERE school_id = ? AND date_in IS NULL AND real_name LIKE ?;
+        `, [req.session.school.id, `%${req.query.name}%`]);
         oldLoans = await connection.query(`
             SELECT *
             FROM loans_view
-            WHERE school_id = ? AND date_in IS NOT NULL AND real_name = ?;
-        `, [req.session.school.id, req.query.name]);
+            WHERE school_id = ? AND date_in IS NOT NULL AND real_name LIKE ?;
+        `, [req.session.school.id, `%${req.query.name}%`]);
         } else {
             loans = await connection.query(`
             SELECT *
