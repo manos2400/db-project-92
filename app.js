@@ -24,7 +24,7 @@ app.use('/', express.static('public'));
 // Serve login page
 app.get('/', (req, res) => {
     if (req.session.loggedIn) { return res.redirect('/dashboard'); }
-    return res.render('login');
+    return res.render('login_new');
 });
 
 // Process login form
@@ -32,6 +32,9 @@ app.use('/login', require('./routes/login.js'));
 
 // Process change password page
 app.use('/password', require('./routes/password.js'));
+
+// Serve register page
+app.use('/register', require('./routes/register.js'));
 
 // Serve dashboard page
 app.use('/dashboard', require('./routes/dashboard.js'));

@@ -2,6 +2,20 @@ CREATE DATABASE IF NOT EXISTS school_library_92;
 
 USE school_library_92;
 
+CREATE TABLE pending_users (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  username VARCHAR(45) NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  real_name VARCHAR(45) NOT NULL,
+  date_of_birth DATE NOT NULL,
+  email VARCHAR(90) NOT NULL,
+  address VARCHAR(90) NOT NULL,
+  phone_number VARCHAR(20) NOT NULL,
+  type ENUM ('admin', 'manager', 'student', 'teacher') NOT NULL,
+  school_id INT NOT NULL,
+  CONSTRAINT pu_school FOREIGN KEY (school_id) REFERENCES schools(id)
+);
+
 CREATE TABLE users (
   id INT PRIMARY KEY AUTO_INCREMENT,
   username VARCHAR(45) NOT NULL,
