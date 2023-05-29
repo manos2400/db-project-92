@@ -1,8 +1,19 @@
 const express = require("express");
 const pool = require("../database.js");
-const e = require("express");
-
+const multer = require("multer");
 const router = express.Router();
+const fs = require("fs");
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'public/book_covers/images/'); // Specify the directory where the uploaded files will be saved
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${file.originalname}`); // Use the original filename
+  }
+});
+
+const upload = multer({ storage });
 
 router.get("/", async (req, res) => {
   try {
@@ -114,5 +125,91 @@ router.post("/reserve/:book_id", async (req, res) => {
         await connection.release();
     }
     return res.status(200).send('Book reserved');
+});
+router.post("/add", async (req, res) => {
+  if (!req.session.loggedIn) {
+    return res.redirect("/");
+  }
+  if (req.session.user.type !== "manager") {
+    return res.status(403).send("You are not allowed to add books.");
+  }
+  const { title, publisher, isbn, pages, description, language, keywords, authors, categories, quantity } = req.body;
+  let { picture } = req.body;
+  const connection = await pool.getConnection();
+  try {
+    // Check if the book already exists in another school
+    const book = await connection.query(
+      `SELECT * FROM books WHERE title = ?;`,
+      [title]
+    );
+    if (book.length > 0) {
+    await connection.query(`INSERT INTO school_books (school_id, book_id, quantity, available) VALUES (?, ?, ?, ?);`, [req.session.school.id, book[0].id, quantity, quantity]); // Assuming all new copies are available
+    return res.status(200).send("Book added");
+    }
+    const fileExtension = picture.split('.').pop();
+    const oldFilePath = __dirname + '/../public/book_covers/images/' + picture;
+    const newFilePath = __dirname + '/../public/book_covers/images/' + title + '.' + fileExtension;
+    fs.rename(oldFilePath, newFilePath, (err) => {
+      if (err) {
+        console.error('Error renaming file:', err);
+      } else {
+        console.log('File renamed successfully.');
+      }
+    });
+    picture = title + '.' + fileExtension;
+    // Add the book to the database if it doesn't exist 
+    const row = await connection.query(
+      `INSERT INTO books (title, publisher, isbn, pages, description, picture, language, keywords) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?);`,
+      [
+        title,
+        publisher,
+        isbn,
+        pages,
+        description,
+        `http://localhost:3000/static/images/${picture}`,
+        language,
+        keywords
+      ]
+    );
+    console.log(row);
+    await connection.query(`INSERT INTO school_books (school_id, book_id, quantity, available) VALUES (?, ?, ?, ?);`, [req.session.school.id, row.insertId, quantity, quantity]); // Assuming all new copies are available
+    // Add the authors to the database
+    const authorsArray = authors.split(",");
+    for (let i = 0; i < authorsArray.length; i++) {
+      const author = authorsArray[i];
+      // Insert the author if it doesn't exist
+      await connection.query(`INSERT IGNORE INTO authors (name) VALUES (?);`, [author]);
+      // Get the author id either way
+      const result = await connection.query(`SELECT * FROM authors WHERE name = ?;`, [author]);
+      // Insert the book-author relation
+      await connection.query(`INSERT INTO book_authors (book_id, author_id) VALUES (?, ?);`, [row.insertId, result[0].id]);
+    }
+    // Add the categories to the database
+    const categoriesArray = categories.split(",");
+    for (let i = 0; i < categoriesArray.length; i++) {
+      const category = categoriesArray[i];
+      // Insert the category if it doesn't exist
+      await connection.query(`INSERT IGNORE INTO categories (name) VALUES (?);`, [category]);
+      // Get the category id either way
+      const result = await connection.query(`SELECT * FROM categories WHERE name = ?;`, [category]);
+      // Insert the book-category relation
+      await connection.query(`INSERT INTO book_categories (book_id, category_id) VALUES (?, ?);`, [row.insertId, result[0].id]);
+    }
+    return res.status(200).send("Book added");
+  } catch (error) {
+    console.error(error);
+    return res.status(503).send("Database is currently unavailable.");
+  }
+
+});
+router.post("/add/picture", upload.single('file'), async (req, res) => {
+  if (!req.session.loggedIn) {
+    return res.status(403).send("You are not logged in.");
+  }
+  if (req.session.user.type !== "manager") {
+    return res.status(403).send("You are not allowed to do this.");
+  }
+  return res.status(200).send("File uploaded.");
 });
 module.exports = router;
