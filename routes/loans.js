@@ -17,23 +17,33 @@ router.get("/", async (req, res) => {
             loans = await connection.query(`
             SELECT *
             FROM loans_view
-            WHERE school_id = ? AND date_in IS NULL AND real_name LIKE ?;
+            WHERE school_id = ? AND date_in IS NULL AND real_name LIKE ? AND date_due > NOW();
         `, [req.session.school.id, `%${req.query.name}%`]);
         oldLoans = await connection.query(`
             SELECT *
             FROM loans_view
             WHERE school_id = ? AND date_in IS NOT NULL AND real_name LIKE ?;
         `, [req.session.school.id, `%${req.query.name}%`]);
+        delayedLoans = await connection.query(`
+            SELECT *
+            FROM loans_view
+            WHERE school_id = ? AND date_in IS NULL AND date_due < NOW() AND real_name LIKE ?;
+        `, [req.session.school.id, `%${req.query.name}%`]);
         } else {
             loans = await connection.query(`
             SELECT *
             FROM loans_view
-            WHERE school_id = ? AND date_in IS NULL;
+            WHERE school_id = ? AND date_in IS NULL AND date_due > NOW();
         `, [req.session.school.id]);
         oldLoans = await connection.query(`
             SELECT *
             FROM loans_view
             WHERE school_id = ? AND date_in IS NOT NULL;
+        `, [req.session.school.id]);
+        delayedLoans = await connection.query(`
+            SELECT *
+            FROM loans_view
+            WHERE school_id = ? AND date_in IS NULL AND date_due < NOW();
         `, [req.session.school.id]);
         }
     } catch (error) {
@@ -47,7 +57,8 @@ router.get("/", async (req, res) => {
     return res.render('loans', {
         session: req.session,
         loans,
-        oldLoans
+        oldLoans,
+        delayedLoans
     });
 })
 router.use('/manage', manageRouter);
