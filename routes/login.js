@@ -17,10 +17,8 @@ router.post("/", async (req, res) => {
         // Check credentials
         const rows = await connection.query(`
             SELECT  su.school_id AS school_id, u.id AS user_id, u.type AS user_type
-            FROM users u
-            INNER JOIN school_users su ON u.id = su.user_id
-            INNER JOIN schools s ON su.school_id = s.id
-            WHERE u.username = ? AND u.password = ?
+            FROM school_users su
+            RIGHT JOIN  users u ON u.id = su.user_id
         `, [username, password]);
         if (rows.length === 1) {
             // Successful login
@@ -30,9 +28,11 @@ router.post("/", async (req, res) => {
                 type: rows[0].user_type,
                 id: rows[0].user_id
             }
+            if(rows[0].user_type !== 'admin') {
             req.session.school = {
                 id: rows[0].school_id
             };
+            }
             return res.status(202).send("Success");
         } else {
             // Invalid credentials

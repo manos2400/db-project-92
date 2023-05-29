@@ -23,12 +23,16 @@ app.use('/static', express.static('public/book_covers'));
 app.use('/', express.static('public'));
 // Serve login page
 app.get('/', (req, res) => {
-    if (req.session.loggedIn) { return res.redirect('/dashboard'); }
+    if (req.session.loggedIn && req.session.user.type !== "admin") { return res.redirect('/dashboard'); }
+    if (req.session.loggedIn && req.session.user.type === "admin") { return res.redirect('/admin'); }
     return res.render('login');
 });
 
 // Process login form
 app.use('/login', require('./routes/login.js'));
+
+// Serve admin page
+app.use('/admin', require('./routes/admin.js'));
 
 // Process change password page
 app.use('/password', require('./routes/password.js'));
