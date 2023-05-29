@@ -15,6 +15,7 @@
   <link rel="stylesheet" href="/css/Profile-with-data-and-skills.css">
   <link rel="stylesheet" href="/css/Soft-UI-Aside-Navbar.css">
   <link rel="stylesheet" href="/css/dropdown.css">
+  <link rel="stylesheet" href="/css/buttons.css">
   <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
   <script src="https://unpkg.com/axios@1.4.0"></script>
   <script src="https://unpkg.com/vue@next"></script>
@@ -78,13 +79,13 @@
               </div>
               <hr>
               <div id="app" class="row">
-                <div class="mb-3"><button v-if="!showForm" @click="showForm = true" class="btn btn-primary d-block w-100" style="--bs-btn-bg: #fd800d;--bs-btn-border-color: #fd800d;--bs-btn-hover-bg: #a95f0a;--bs-btn-hover-border-color: #653306;">Change Password</button></div>
+                <div class="mb-3"><button v-if="!showForm" @click="showForm = true" class="btn btn-primary d-block w-100">Change Password</button></div>
                   <form v-if="showForm" @submit.prevent="submitForm" class="text-center">
                     <div class="mb-3"><input class="form-control" type="password" v-model="formData.newpass" placeholder="New Password"></div>
                     <div class="mb-3"><input class="form-control" type="password" v-model="formData.confirmpass" placeholder="Retype Password"></div>
                     <p style="color: #df0b0b">{{ error }}</p>
                     <p>{{ success }}</p>
-                    <div class="mb-3"><button class="btn btn-primary d-block w-100" type="submit" style="--bs-btn-bg: #fd800d;--bs-btn-border-color: #fd800d;--bs-btn-hover-bg: #a95f0a;--bs-btn-hover-border-color: #653306;">Change Password</button></div>
+                    <div class="mb-3"><button class="btn btn-primary d-block w-100" type="submit">Change Password</button></div>
                   </form>
               </div>
             </div>
