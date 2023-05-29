@@ -1,0 +1,30 @@
+.btn-primary {
+    color: #fff;
+    background-color: #fd800d;
+    border-color: #fd800d;
+}
+.btn-primary:active {
+    background-color: #a95f0a;
+    border-color: #af6a0f;
+} 
+
+.btn-primary:focus {
+    background-color: #a95f0a;
+    border-color: #af6a0f;
+} 
+
+.btn-primary:hover{
+    background-color: #a95f0a;
+    border-color: #af6a0f;
+}
+
+.floating-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #fd800d;
+    color: white;
+    padding: 17px 18px;
+    font-size: 20px;
+    border-radius: 50%;
+  }
