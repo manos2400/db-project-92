@@ -19,6 +19,7 @@ router.post("/", async (req, res) => {
             SELECT  su.school_id AS school_id, u.id AS user_id, u.type AS user_type
             FROM school_users su
             RIGHT JOIN  users u ON u.id = su.user_id
+            WHERE u.username = ? AND u.password = ?;
         `, [username, password]);
         if (rows.length === 1) {
             // Successful login
