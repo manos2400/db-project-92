@@ -136,6 +136,9 @@ router.post("/add", async (req, res) => {
   const { title, publisher, isbn, pages, description, language, keywords, authors, categories, quantity } = req.body;
   let { picture } = req.body;
   const connection = await pool.getConnection();
+  if (quantity < 0) {
+    return res.status(400).send("Quantity cannot be negative.");
+  }
   try {
     // Check if the book already exists in another school
     const book = await connection.query(
@@ -156,7 +159,7 @@ router.post("/add", async (req, res) => {
         console.log('File renamed successfully.');
       }
     });
-    picture = title + '.' + fileExtension;
+    picture = title.split(" ").join('_') + '.' + fileExtension;
     // Add the book to the database if it doesn't exist 
     const row = await connection.query(
       `INSERT INTO books (title, publisher, isbn, pages, description, picture, language, keywords) 
@@ -211,5 +214,110 @@ router.post("/add/picture", upload.single('file'), async (req, res) => {
     return res.status(403).send("You are not allowed to do this.");
   }
   return res.status(200).send("File uploaded.");
+});
+router.post("/edit/:id", async (req, res) => {
+  if (!req.session.loggedIn) {
+    return res.redirect("/");
+  }
+  if (req.session.user.type !== "manager") {
+    return res.status(403).send("You are not allowed to add books.");
+  }
+  const { id, title, publisher, isbn, pages, description, language, keywords, authors, categories, quantity } = req.body;
+  let { picture } = req.body;
+  const connection = await pool.getConnection();
+  if (quantity < 0) {
+    return res.status(400).send("Quantity cannot be negative.");
+  }
+  try {
+    // Check if the quantity doesnt match with currently lent books
+    const rows = await connection.query(`SELECT * FROM school_books WHERE school_id = ? AND book_id = ? AND quantity - available > ?`, [req.session.school.id, id, quantity]);
+    if (rows.length > 0) {
+      return res.status(400).send("Quantity cannot be less than the number of currently lent books.");
+    }
+    // Check if the quantity is zero and delete the book from this school
+    if (quantity == 0) {
+      await connection.query(`DELETE FROM school_books WHERE school_id = ? AND book_id = ?;`, [req.session.school.id, id]);
+      return res.status(200).send("Book removed from this library.");
+    }
+    if(!picture.startsWith("http://localhost:3000/static/images/")) {
+    const fileExtension = picture.split('.').pop();
+    const oldFilePath = __dirname + '/../public/book_covers/images/' + picture;
+    const newFilePath = __dirname + '/../public/book_covers/images/' + title + '.' + fileExtension;
+    fs.rename(oldFilePath, newFilePath, (err) => {
+      if (err) {
+        console.error('Error renaming file:', err);
+      } else {
+        console.log('File renamed successfully.');
+      }
+    });
+    picture = title.split(" ").join('_') + '.' + fileExtension;
+    
+    // Add the book to the database if it doesn't exist 
+    await connection.query(
+      `UPDATE books 
+       SET title = ?, publisher= ?, isbn= ?, pages= ?, description= ?, picture= ?, language= ?, keywords= ? 
+      WHERE id = ?;`,
+      [
+        title,
+        publisher,
+        isbn,
+        pages,
+        description,
+        `http://localhost:3000/static/images/${picture}`,
+        language,
+        keywords,
+        id
+      ]
+    );
+    } else {
+      await connection.query(
+        `UPDATE books 
+         SET title = ?, publisher= ?, isbn= ?, pages= ?, description= ?, language= ?, keywords= ? 
+        WHERE id = ?;`,
+        [
+          title,
+          publisher,
+          isbn,
+          pages,
+          description,
+          language,
+          keywords,
+          id
+        ]
+      );
+    }
+    await connection.query(`UPDATE school_books SET available = available - quantity + ?, quantity = ? WHERE school_id = ? AND book_id = ?`, [quantity, quantity ,req.session.school.id, id]);
+    // Remove all authors from the book
+    await connection.query(`DELETE FROM book_authors WHERE book_id = ?;`, [id]);
+    // Add the authors to the database
+    const authorsArray = authors.split(",");
+    for (let i = 0; i < authorsArray.length; i++) {
+      const author = authorsArray[i];
+      // Insert the author if it doesn't exist
+      await connection.query(`INSERT IGNORE INTO authors (name) VALUES (?);`, [author]);
+      // Get the author id either way
+      const result = await connection.query(`SELECT * FROM authors WHERE name = ?;`, [author]);
+      // Insert the book-author relation
+      await connection.query(`INSERT INTO book_authors (book_id, author_id) VALUES (?, ?);`, [id, result[0].id]);
+    }
+    // Remove all categories from the book
+    await connection.query(`DELETE FROM book_categories WHERE book_id = ?;`, [id]);
+    // Add the categories to the database
+    const categoriesArray = categories.split(",");
+    for (let i = 0; i < categoriesArray.length; i++) {
+      const category = categoriesArray[i];
+      // Insert the category if it doesn't exist
+      await connection.query(`INSERT IGNORE INTO categories (name) VALUES (?);`, [category]);
+      // Get the category id either way
+      const result = await connection.query(`SELECT * FROM categories WHERE name = ?;`, [category]);
+      // Insert the book-category relation
+      await connection.query(`INSERT INTO book_categories (book_id, category_id) VALUES (?, ?);`, [id, result[0].id]);
+    }
+    return res.status(200).send("Book edited");
+  } catch (error) {
+    console.error(error);
+    return res.status(503).send("Database is currently unavailable.");
+  }
+
 });
 module.exports = router;
