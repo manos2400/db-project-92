@@ -9,7 +9,12 @@ router.get("/", async (req, res) => {
         }
 
         const connection = await pool.getConnection();
-        const school = await connection.query(`SELECT * FROM schools WHERE id = ?;`, [req.session.school.id]);
+        const school = await connection.query(`
+            SELECT schools.*, users.real_name AS manager_name
+            FROM schools 
+            INNER JOIN users ON schools.library_manager_id = users.id 
+            WHERE schools.id = ?;
+        `, [req.session.school.id]);
         if (!school[0]) {
             throw new Error('School not found');
         }
@@ -18,7 +23,6 @@ router.get("/", async (req, res) => {
         if (!user[0]) {
             throw new Error('User not found');
         }
-
         await connection.release();
 
         return res.render('profile', {
