@@ -91,7 +91,7 @@ router.post("/reserve/:book_id", async (req, res) => {
         // Check if the user has already loaned the book
         const loan = await connection.query(`SELECT * FROM loans WHERE school_id = ? AND book_id = ? AND user_id = ? AND date_in IS NULL;`, [req.session.school.id, book_id, req.session.user.id]);
         if (loan.length > 0) {
-            return res.status(403).send('You have already loaned this book.');
+            return res.status(403).send('You have already borrowed this book.');
         }
         // Check if the user has already reserved the book
         const reservation = await connection.query(`SELECT * FROM reservations WHERE school_id = ? AND book_id = ? AND user_id = ?;`, [req.session.school.id, book_id, req.session.user.id]);
