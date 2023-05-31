@@ -12,7 +12,6 @@
   <link rel="stylesheet" href="/css/Data-Table-styles.css">
   <link rel="stylesheet" href="/css/Data-Table.css">
   <link rel="stylesheet" href="/css/Footer-Dark-icons.css">
-  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css">
   <link rel="stylesheet" href="/css/Login-Form-Basic-icons.css">
   <link rel="stylesheet" href="/css/Soft-UI-Aside-Navbar.css">
   <link rel="stylesheet" href="/css/dropdown.css">
@@ -21,6 +20,9 @@
   <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
   <script src="https://unpkg.com/axios@1.4.0"></script>
   <script src="https://unpkg.com/vue@next"></script>
+  <script src="https://code.jquery.com/jquery-3.7.0.slim.min.js" integrity="sha256-tG5mcZUtJsZvyKAxYLVXrmjKBVLd6VpVccqz/r4ypFE=" crossorigin="anonymous"></script>
+  <script src="https://cdn.datatables.net/v/bs5/dt-1.13.4/datatables.min.js"></script>
+  <link href="https://cdn.datatables.net/v/dt/dt-1.13.4/datatables.min.css" rel="stylesheet"/>
 </head>
 
 <body>
@@ -68,6 +70,7 @@
         <% }); %>
       </tbody>
     </table>
+    <br>
     <h4>Loans</h4>
     <table id="loans" class="table table-striped ">
       <thead>
@@ -102,6 +105,7 @@
         <% }); %>
       </tbody>
     </table>
+    <br>
     <h4>Returned Loans</h4>
     <table id="oldLoans" class="table table-striped ">
       <thead>
@@ -153,6 +157,46 @@
       }
     });
     app.mount('#app')
+    $(document).ready(function() {
+      $('#delayedLoans').DataTable({
+        paging: false,
+        searching: false,
+        info: false,
+        columnDefs: [
+          { "width": "26%", "targets": 0 },
+          { "width": "30%", "targets": 1 },
+          { "width": "11%", "targets": 2 },
+          { "width": "11%", "targets": 3 },
+          { "width": "11%", "targets": 4 },
+          { "width": "11%", "targets": 5 }
+        ]
+      });
+      $('#loans').DataTable({
+        paging: false,
+        searching: false,
+        info: false,
+        columnDefs: [
+          { "width": "26%", "targets": 0 },
+          { "width": "30%", "targets": 1 },
+          { "width": "11%", "targets": 2 },
+          { "width": "11%", "targets": 3 },
+          { "width": "11%", "targets": 4 },
+          { "width": "11%", "targets": 5 }
+        ]
+      });
+      $('#oldLoans').DataTable({
+        paging: false,
+        searching: false,
+        info: false,
+        columnDefs: [
+          { "width": "26%", "targets": 0 },
+          { "width": "30%", "targets": 1 },
+          { "width": "11%", "targets": 2 },
+          { "width": "11%", "targets": 3 },
+          { "width": "22%", "targets": 4 }
+        ]
+      });
+    });
   </script>
 </body>
 

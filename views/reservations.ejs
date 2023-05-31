@@ -12,7 +12,6 @@
   <link rel="stylesheet" href="/css/Data-Table-styles.css">
   <link rel="stylesheet" href="/css/Data-Table.css">
   <link rel="stylesheet" href="/css/Footer-Dark-icons.css">
-  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css">
   <link rel="stylesheet" href="/css/Login-Form-Basic-icons.css">
   <link rel="stylesheet" href="/css/Soft-UI-Aside-Navbar.css">
   <link rel="stylesheet" href="/css/dropdown.css">
@@ -21,18 +20,22 @@
   <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
   <script src="https://unpkg.com/axios@1.4.0"></script>
   <script src="https://unpkg.com/vue@next"></script>
+  <script src="https://code.jquery.com/jquery-3.7.0.slim.min.js" integrity="sha256-tG5mcZUtJsZvyKAxYLVXrmjKBVLd6VpVccqz/r4ypFE=" crossorigin="anonymous"></script>
+  <script src="https://cdn.datatables.net/v/bs5/dt-1.13.4/datatables.min.js"></script>
+  <link href="https://cdn.datatables.net/v/dt/dt-1.13.4/datatables.min.css" rel="stylesheet"/>
 </head>
 
 <body>
   <%- include("includes/navbar.ejs") %>
   <div class="container py-4 py-xl-5">
-    <h4>Reservations</h4>
     <br>
     <div id="app">
       <form @submit.prevent="search">
       <input type="text" v-model="searchTerm" class="input" @keyup.enter="search" placeholder="Search...">
     </form>
     </div>
+    <br>
+    <h4>Reservations</h4>
     <br>
     <table id="reservations" class="table table-striped " >
       <thead>
@@ -42,7 +45,6 @@
           <th>Date</th>
           <th>Date Due</th>
           <th>Manage</th>
-          <th></th>
         </tr>
       </thead>
       <tbody>
@@ -61,16 +63,16 @@
             <%= reservation.date_due.toISOString().split("T")[0] %>
           </td>
           <td>
+            <div class="d-flex">
             <form name="acceptForm" method="POST" action="/reservations/manage/accept/<%=reservation.book_id%>/<%=reservation.user_id%>">
               <input type="hidden">
               <button class="btn btn-success ms-md-2" role="button" type="submit">Accept</button>
             </form>
-          </td>
-          <td>
             <form name="denyForm" method="POST" action="/reservations/manage/deny/<%=reservation.book_id%>/<%=reservation.user_id%>">
               <input type="hidden">
               <button class="btn btn-danger ms-md-2" role="button" type="submit">Deny</button>
             </form>
+          </div>
           </td>
           </tr>
         <% }); %>
@@ -93,7 +95,20 @@
       }
     });
     app.mount('#app')
-  </script>
+    $(document).ready(function() {
+      $('#reservations').DataTable({
+        paging: false,
+        searching: false,
+        info: false,
+        columnDefs: [
+          { "width": "26%", "targets": 0 },
+          { "width": "30%", "targets": 1 },
+          { "width": "11%", "targets": 2 },
+          { "width": "11%", "targets": 3 },
+          { "width": "22%", "targets": 4 },        ]
+      });
+    });
+    </script>
   
 </body>
 
