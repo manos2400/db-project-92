@@ -244,11 +244,7 @@ router.post("/edit/:id", async (req, res) => {
     const oldFilePath = __dirname + '/../public/book_covers/images/' + picture;
     const newFilePath = __dirname + '/../public/book_covers/images/' + title.split(" ").join('_') + '.' + fileExtension;
     fs.rename(oldFilePath, newFilePath, (err) => {
-      if (err) {
-        console.error('Error renaming file:', err);
-      } else {
-        console.log('File renamed successfully.');
-      }
+      if (err) console.error('Error renaming file:', err);
     });
     picture = title.split(" ").join('_') + '.' + fileExtension;
     
@@ -313,7 +309,7 @@ router.post("/edit/:id", async (req, res) => {
       // Insert the book-category relation
       await connection.query(`INSERT INTO book_categories (book_id, category_id) VALUES (?, ?);`, [id, result[0].id]);
     }
-    return res.status(200).send("Book edited");
+    return res.status(200).send("The book has been edited successfully.");
   } catch (error) {
     console.error(error);
     return res.status(503).send("Database is currently unavailable.");
