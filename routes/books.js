@@ -242,7 +242,7 @@ router.post("/edit/:id", async (req, res) => {
     if(!picture.startsWith("http://localhost:3000/static/images/")) {
     const fileExtension = picture.split('.').pop();
     const oldFilePath = __dirname + '/../public/book_covers/images/' + picture;
-    const newFilePath = __dirname + '/../public/book_covers/images/' + title + '.' + fileExtension;
+    const newFilePath = __dirname + '/../public/book_covers/images/' + title.split(" ").join('_') + '.' + fileExtension;
     fs.rename(oldFilePath, newFilePath, (err) => {
       if (err) {
         console.error('Error renaming file:', err);
