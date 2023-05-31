@@ -34,6 +34,9 @@ app.use('/login', require('./routes/login.js'));
 // Serve admin page
 app.use('/admin', require('./routes/admin.js'));
 
+// Serve users page
+app.use('/users', require('./routes/users.js'));
+
 // Process change password page
 app.use('/password', require('./routes/password.js'));
 

@@ -30,7 +30,6 @@ router.post("/", async (req, res) => {
     const connection = await pool.getConnection();
     const { username, password, real_name, date_of_birth, email, address, phone, type, school_id } = req.body;
     try {
-        // Check credentials
         const p_users = await connection.query(`
             SELECT username FROM pending_users WHERE username = ?;
         `, [username]);
