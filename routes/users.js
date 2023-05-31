@@ -63,13 +63,13 @@ router.get("/:id", async (req, res) => {
             `SELECT * FROM users WHERE id = ?;`,
         [req.params.id]);
     }
-
     await connection.release();
     if (!user) {
       return res.status(404).send("User not found");
     }
-
-    return res.send(user[0]);
+    user = user[0];
+    user.date_of_birth = user.date_of_birth.toISOString().split("T")[0];
+    return res.send(user);
   } catch (error) {
     console.error(error);
     return res.status(503).send("Database is currently unavailable.");
@@ -116,9 +116,52 @@ router.post("/activate/:id", async (req, res) => {
     return res.status(501).send("Not implemented yet.");
 });
 router.post("/pending/accept/:id", async (req, res) => {
-    return res.status(501).send("Not implemented yet.");
+  if (!req.session.loggedIn) {
+    return res.redirect("/");
+  }
+  if (req.session.user.type !== "manager") {
+    return res.status(403).send("You are not allowed to accept user applications.");
+  }
+  try {
+    const connection = await pool.getConnection();
+    const user = await connection.query(`
+        SELECT * FROM pending_users WHERE id = ?;
+    `, [req.params.id]);
+    if(!user) {
+        return res.status(404).send("User application not found.");
+    }
+    const newUser = await connection.query(`
+        INSERT INTO users (username, password, real_name, date_of_birth, email, address, phone_number, type)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+    `, [user[0].username, user[0].password, user[0].real_name, user[0].date_of_birth, user[0].email, user[0].address, user[0].phone_number, user[0].type]);
+    await connection.query(`
+        INSERT INTO school_users (school_id, user_id)
+        VALUES (?, ?);
+    `, [user[0].school_id, newUser.insertId]);
+    await connection.query(`
+        DELETE FROM pending_users WHERE id = ?;
+    `, [req.params.id]);
+    return res.status(202).redirect("/users");
+  } catch (error) {
+    console.error(error);
+    return res.status(503).send("Database is currently unavailable.");
+  }
 });
 router.post("/pending/deny/:id", async (req, res) => {
-    return res.status(501).send("Not implemented yet.");
-});
+  if (!req.session.loggedIn) {
+    return res.redirect("/");
+  }
+  if (req.session.user.type !== "manager") {
+    return res.status(403).send("You are not allowed to deny user applications.");
+  }
+  try {
+    const connection = await pool.getConnection();
+    await connection.query(`
+        DELETE FROM pending_users WHERE id = ?;
+    `, [req.params.id]);
+    return res.status(200).redirect("/users");
+  } catch (error) {
+    console.error(error);
+    return res.status(503).send("Database is currently unavailable.");
+  }});
 module.exports = router;
