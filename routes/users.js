@@ -107,14 +107,54 @@ router.post("/edit/:id", async (req, res) => {
 
 });
 router.post("/delete/:id", async (req, res) => {
-    return res.status(501).send("Not implemented yet.");
+  if (!req.session.loggedIn) {
+    return res.redirect("/");
+  }
+  if (req.session.user.type !== "manager") {
+    return res.status(403).send("You are not allowed to delete users.");
+  }
+  try {
+    const connection = await pool.getConnection();
+    await connection.query(`
+        DELETE FROM users WHERE id = ?;
+    `, [req.params.id]);
+    return res.status(200).redirect("/users");
+  } catch (error) {
+    console.error(error);
+    return res.status(503).send("Database is currently unavailable.");
+  }
 });
 router.post("/deactivate/:id", async (req, res) => {
-    return res.status(501).send("Not implemented yet.");
-});
-router.post("/activate/:id", async (req, res) => {
-    return res.status(501).send("Not implemented yet.");
-});
+  // Deactivation just moves the user to the pending_users table like they are a new user
+  if (!req.session.loggedIn) {
+    return res.redirect("/");
+  }
+  if (req.session.user.type !== "manager") {
+    return res.status(403).send("You are not allowed to deactivate users.");
+  }
+  try {
+    const connection = await pool.getConnection();
+    // Get the user info from the users table
+    const user = await connection.query(`
+        SELECT users.*, school_users.school_id AS school_id 
+        FROM users
+        INNER JOIN school_users ON users.id = school_users.user_id 
+        WHERE users.id = ?;
+    `, [req.params.id]);
+    // Insert the user info into the pending_users table
+    await connection.query(`
+        INSERT INTO pending_users (username, password, real_name, date_of_birth, email, address, phone_number, type, school_id)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+    `, [user[0].username, user[0].password, user[0].real_name, user[0].date_of_birth, user[0].email, user[0].address, user[0].phone_number, user[0].type, user[0].school_id]);
+    // Delete the user from the users table
+    await connection.query(`
+        DELETE FROM users WHERE id = ?;
+    `, [req.params.id]);
+    return res.status(200).redirect("/users");
+  } catch (error) {
+    console.error(error);
+    return res.status(503).send("Database is currently unavailable.");
+  }});
 router.post("/pending/accept/:id", async (req, res) => {
   if (!req.session.loggedIn) {
     return res.redirect("/");
