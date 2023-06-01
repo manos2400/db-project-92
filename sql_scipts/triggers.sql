@@ -40,8 +40,7 @@ END;
 CREATE TRIGGER `safe_user_delete` BEFORE DELETE ON `users` 
 FOR EACH ROW 
 BEGIN 
-DELETE FROM reservations 
-WHERE user_id = old.id; 
+DELETE FROM reservations WHERE user_id = old.id; 
 DELETE FROM school_users WHERE user_id = old.id; 
 DELETE FROM loans WHERE user_id = old.id; 
 DELETE FROM reviews WHERE user_id = old.id; 

@@ -623,6 +623,20 @@ VALUES
     (3, 34),
     (3, 35);
 
+-- Link schools to teachers
+INSERT INTO school_users(school_id, user_id)
+VALUES
+    (2, 36),
+    (1, 37),
+    (1, 38),
+    (3, 39),
+    (2, 40),
+    (1, 41),
+    (2, 42),
+    (3, 43),
+    (3, 44),
+    (1, 45);
+
 -- Link schools to managers. 1 manager per school assuming managers start from id 1
 INSERT INTO school_users(school_id, user_id)
 VALUES
