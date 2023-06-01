@@ -2,20 +2,6 @@ CREATE DATABASE IF NOT EXISTS school_library_92;
 
 USE school_library_92;
 
-CREATE TABLE pending_users (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  username VARCHAR(45) NOT NULL,
-  password VARCHAR(255) NOT NULL,
-  real_name VARCHAR(45) NOT NULL,
-  date_of_birth DATE NOT NULL,
-  email VARCHAR(90) NOT NULL,
-  address VARCHAR(90) NOT NULL,
-  phone_number VARCHAR(20) NOT NULL,
-  type ENUM ('admin', 'manager', 'student', 'teacher') NOT NULL,
-  school_id INT NOT NULL,
-  CONSTRAINT pu_school FOREIGN KEY (school_id) REFERENCES schools(id)
-);
-
 CREATE TABLE users (
   id INT PRIMARY KEY AUTO_INCREMENT,
   username VARCHAR(45) NOT NULL,
@@ -39,6 +25,20 @@ CREATE TABLE schools (
   principal_name VARCHAR(90) NOT NULL,
   library_manager_id INT NOT NULL,
   CONSTRAINT lib_manager FOREIGN KEY (library_manager_id) REFERENCES users(id)
+);
+
+CREATE TABLE pending_users (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  username VARCHAR(45) NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  real_name VARCHAR(45) NOT NULL,
+  date_of_birth DATE NOT NULL,
+  email VARCHAR(90) NOT NULL,
+  address VARCHAR(90) NOT NULL,
+  phone_number VARCHAR(20) NOT NULL,
+  type ENUM ('admin', 'manager', 'student', 'teacher') NOT NULL,
+  school_id INT NOT NULL,
+  CONSTRAINT pu_school FOREIGN KEY (school_id) REFERENCES schools(id)
 );
 
 CREATE TABLE books (
@@ -135,7 +135,7 @@ CREATE TABLE reviews (
 
 -- Views
 CREATE VIEW reservations_view AS
-SELECT u.real_name, books.title, r.date, r.waited, r.date_due, r.user_id, r. , r.book_id, r.school_id
+SELECT u.real_name, books.title, r.date, r.waited, r.date_due, r.user_id, r.book_id, r.school_id
 FROM books
 INNER JOIN reservations r ON books.id = r.book_id
 INNER JOIN users u on r.user_id = u.id;
@@ -181,42 +181,3 @@ BEGIN
     WHERE user_id = userId;
 END //
 DELIMITER ;
-
--- Triggers
-CREATE TRIGGER `new_reservation` AFTER INSERT ON `school_books` 
-FOR EACH ROW 
-BEGIN 
-UPDATE school_books 
-SET available = available - 1 
-WHERE book_id = NEW.book_id; 
-END 
-
-CREATE TRIGGER `wait_reservations` AFTER UPDATE ON `school_books` 
-FOR EACH ROW 
-BEGIN 
-IF NEW.available = 0 THEN UPDATE reservations 
-SET waited = TRUE
-WHERE book_id = NEW.book_id AND school_id = NEW.school_id; END IF; 
-END
-
-CREATE TRIGGER `unwait_reservations` AFTER UPDATE ON `school_books` 
-FOR EACH ROW 
-BEGIN 
-IF NEW.available > 0 THEN UPDATE reservations 
-SET waited = FALSE, date = NOW(), date_due = DATE_ADD(NOW(), INTERVAL 7 DAY) 
-WHERE book_id = NEW.book_id AND school_id = NEW.school_id; 
-END IF; 
-END
-
-CREATE TRIGGER `check_availability` BEFORE INSERT ON `reservations` 
-FOR EACH ROW 
-BEGIN 
-  DECLARE copies INT; 
-
-  SELECT available INTO copies FROM school_books 
-  WHERE book_id = NEW.book_id AND school_id = NEW.school_id; 
-
-  IF copies = 0 THEN 
-    SET NEW.waited = TRUE; 
-  END IF; 
-END; 
