@@ -97,7 +97,8 @@
           <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
         </svg>
       </a>
-      <%- include('includes/userinfo.ejs') %>
+      <%- include("includes/userInfo.ejs") %>
+      <%- include("includes/editUser.ejs") %>
     </div>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -107,8 +108,17 @@
         return {
         searchTerm: '',
         infoPanel: "dialog-container hidden",
+        editPanel: "dialog-container hidden",
         user: null,
-        message: null
+        message: null,
+        // Edit Info
+        username: '',
+        password: '',
+        real_name: '',
+        date_of_birth: '',
+        email: '',
+        address: '',
+        phone_number: ''
         }
       },
       methods: {
@@ -139,11 +149,50 @@
             });
           }
         },
+        openEditDialog() {
+          this.username = this.user.username;
+          this.password = this.user.password;
+          this.real_name = this.user.real_name;
+          this.date_of_birth = this.user.date_of_birth;
+          this.email = this.user.email;
+          this.address = this.user.address;
+          this.phone_number = this.user.phone_number;
+          this.infoPanel = "dialog-container hidden";
+          this.editPanel = "dialog-container";
+        },
         closeDialog(panel) {
           this.user = null;
+          this.message = null;
           if(panel === 'info') {
             this.infoPanel = "dialog-container hidden";
+          } else if (panel === 'edit') {
+            this.editPanel = "dialog-container hidden";
+            this.username = '';
+            this.password = '';
+            this.real_name = '';
+            this.date_of_birth = '';
+            this.email = '';
+            this.address = '';
+            this.phone_number = '';
           }
+        },
+        editUser() {
+          const params = new URLSearchParams();
+          params.append('username', this.username);
+          params.append('password', this.password);
+          params.append('real_name', this.real_name);
+          params.append('date_of_birth', this.date_of_birth);
+          params.append('email', this.email);
+          params.append('address', this.address);
+          params.append('phone_number', this.phone_number);
+          axios.post('http://localhost:3000/users/edit/' + this.user.id, params)
+            .then(response => {
+              this.message = response.data;
+            })
+            .catch(error => {
+              console.log('Error:', error);
+              this.message = error.response.data;
+            });
         }
       }
     });

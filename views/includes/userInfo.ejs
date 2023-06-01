@@ -90,7 +90,7 @@
                   <div class="d-flex justify-content-center">
                     <form name="editForm" >
                       <input type="hidden">
-                    <button class="btn btn-primary ms-md-2" type="submit">Edit</button>
+                    <button class="btn btn-primary ms-md-2" type="button" @click="openEditDialog">Edit</button>
                     </form>
                     <form name="deleteForm" method="POST" :action="'/users/delete/' + user.id">
                       <input type="hidden">

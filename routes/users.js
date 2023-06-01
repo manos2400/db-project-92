@@ -82,8 +82,23 @@ router.post("/create", async (req, res) => {
   if (req.session.user.type !== "manager") {
     return res.status(403).send("You are not allowed to add users.");
   }
+  const { username, password, real_name, date_of_birth, email, address, phone_number, type } = req.body;
   try {
+
     const connection = await pool.getConnection();
+    // Check if the username is already taken
+    const usernameCheck = await connection.query(`
+        SELECT * FROM users WHERE username = ?;
+    `, [username]);
+    if (usernameCheck.length > 0) {
+      return res.status(409).send("Username is already taken.");
+    }
+    // Create the user
+    await connection.query(`
+        INSERT INTO users (username, password, real_name, date_of_birth, email, address, phone_number, type)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+    `, [username, password, real_name, date_of_birth, email, address, phone_number, type]);
+
   } catch (error) {
     console.error(error);
     return res.status(503).send("Database is currently unavailable.");
@@ -97,9 +112,24 @@ router.post("/edit/:id", async (req, res) => {
   if (req.session.user.type !== "manager") {
     return res.status(403).send("You are not allowed to edit users.");
   }
+  const { username, password, real_name, date_of_birth, email, address, phone_number } = req.body;
+  const id = req.params.id;
   try {
     const connection = await pool.getConnection();
-
+    // Check if the username is already taken
+    const usernameCheck = await connection.query(`
+    SELECT * FROM users WHERE username = ? AND id != ?;
+    `, [username, id]);
+    if (usernameCheck.length > 0) {
+    return res.status(409).send("Username is already taken.");
+    }
+    // Create the user
+    await connection.query(`
+    UPDATE users 
+    SET username = ?, password = ?, real_name = ?, date_of_birth = ?, email = ?, address = ?, phone_number = ?
+    WHERE id = ?;
+    `, [username, password, real_name, date_of_birth, email, address, phone_number, id]);
+    return res.status(200).send("User updated successfully.");
   } catch (error) {
     console.error(error);
     return res.status(503).send("Database is currently unavailable.");
