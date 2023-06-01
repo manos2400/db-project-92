@@ -18,6 +18,7 @@
   <link rel="stylesheet" href="/css/dialog.css">
   <link rel="stylesheet" href="/css/input.css">
   <link rel="stylesheet" href="/css/buttons.css">
+  <link rel="stylesheet" href="/css/newUser.css">
   <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
   <script src="https://unpkg.com/axios@1.4.0"></script>
   <script src="https://unpkg.com/vue@next"></script>
@@ -92,13 +93,14 @@
           <% }); %>
       </tbody>
     </table>
-      <a class="btn btn-primary floating-button" href="/users/create">
+      <button class="btn btn-primary floating-button" @click="openCreateDialog">
         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" viewBox="0 0 16 16">
           <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
         </svg>
-      </a>
+      </button>
       <%- include("includes/userInfo.ejs") %>
       <%- include("includes/editUser.ejs") %>
+      <%- include("includes/newUser.ejs") %>
     </div>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -109,6 +111,7 @@
         searchTerm: '',
         infoPanel: "dialog-container hidden",
         editPanel: "dialog-container hidden",
+        createPanel: "dialog-container hidden",
         user: null,
         message: null,
         // Edit Info
@@ -118,7 +121,9 @@
         date_of_birth: '',
         email: '',
         address: '',
-        phone_number: ''
+        phone_number: '',
+        // Create Info (same as edit +)
+        type: ''
         }
       },
       methods: {
@@ -160,6 +165,9 @@
           this.infoPanel = "dialog-container hidden";
           this.editPanel = "dialog-container";
         },
+        openCreateDialog() {
+          this.createPanel = "dialog-container";
+        },
         closeDialog(panel) {
           this.user = null;
           this.message = null;
@@ -174,6 +182,16 @@
             this.email = '';
             this.address = '';
             this.phone_number = '';
+          } else if (panel === 'create') {
+            this.createPanel = "dialog-container hidden";
+            this.username = '';
+            this.password = '';
+            this.real_name = '';
+            this.date_of_birth = '';
+            this.email = '';
+            this.address = '';
+            this.phone_number = '';
+            this.type = '';
           }
         },
         editUser() {
@@ -186,6 +204,25 @@
           params.append('address', this.address);
           params.append('phone_number', this.phone_number);
           axios.post('http://localhost:3000/users/edit/' + this.user.id, params)
+            .then(response => {
+              this.message = response.data;
+            })
+            .catch(error => {
+              console.log('Error:', error);
+              this.message = error.response.data;
+            });
+        },
+        createUser() {
+          const params = new URLSearchParams();
+          params.append('username', this.username);
+          params.append('password', this.password);
+          params.append('real_name', this.real_name);
+          params.append('date_of_birth', this.date_of_birth);
+          params.append('email', this.email);
+          params.append('address', this.address);
+          params.append('phone_number', this.phone_number);
+          params.append('type', this.type);
+          axios.post('http://localhost:3000/users/create', params)
             .then(response => {
               this.message = response.data;
             })

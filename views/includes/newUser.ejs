@@ -1,0 +1,75 @@
+<div v-bind:class="createPanel">
+  <div class="dialog">
+    <div class="main-body">
+      <button class="btn-close" type="button" aria-label="Close" @click="closeDialog('create')" style="margin-bottom: 7px;"></button>
+      <br>
+      <div class="row justify-content-around">
+        <div class="col-md mb-3">
+          <div class="row">
+            <div class="col-sm-4">
+              <h6>Username</h6>
+            </div>
+            <input class="field" type="text" v-model="username" />
+          </div>
+          <div class="row">
+            <div class="col-sm-4">
+              <h6>Password</h6>
+            </div>
+            <input class="field" type="password" v-model="password" />
+          </div>
+          <div class="row">
+            <div class="col-sm-4">
+              <h6>Full Name</h6>
+            </div>
+            <input class="field" type="text" v-model="real_name" />
+          </div>
+          <div class="row">
+            <div class="col-sm-6">
+              <h6>Date of Birth</h6>
+            </div>
+            <input class="field" type="text" v-model="date_of_birth" />
+          </div>
+        </div>
+        <div class="col-md mb-3">
+          <div class="row">
+            <div class="col-sm-4">
+              <h6>Email</h6>
+            </div>
+            <input class="field" type="text" v-model="email" />
+          </div>
+          <div class="row">
+            <div class="col-sm-4">
+              <h6>Address</h6>
+            </div>
+            <input class="field" type="text" v-model="address" />
+          </div>
+          <div class="row">
+            <div class="col-sm-4">
+              <h6>Type</h6>
+            </div>
+            <select class="field" v-model="type">
+              <option value="student">Student</option>
+              <option value="teacher">Teacher</option>
+            </select>
+          </div>
+          <div class="row">
+            <div class="col-sm-4">
+              <h6>Phone</h6>
+            </div>
+            <input class="field" type="text" v-model="phone_number" />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-12">
+            <button class="btn btn-primary" @click="createUser()">Submit</button>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <p>
+          {{ message }}
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
