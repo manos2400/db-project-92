@@ -1,10 +1,10 @@
 -- Triggers
-CREATE TRIGGER `new_reservation` AFTER INSERT ON `school_books` 
+CREATE TRIGGER `new_loan` AFTER INSERT ON `loans` 
 FOR EACH ROW 
 BEGIN 
 UPDATE school_books 
 SET available = available - 1 
-WHERE book_id = NEW.book_id; 
+WHERE book_id = NEW.book_id and school_id = NEW.school_id; 
 END 
 
 CREATE TRIGGER `wait_reservations` AFTER UPDATE ON `school_books` 
@@ -36,3 +36,13 @@ BEGIN
     SET NEW.waited = TRUE; 
   END IF; 
 END; 
+
+CREATE TRIGGER `safe_user_delete` BEFORE DELETE ON `users` 
+FOR EACH ROW 
+BEGIN 
+DELETE FROM reservations 
+WHERE user_id = old.id; 
+DELETE FROM school_users WHERE user_id = old.id; 
+DELETE FROM loans WHERE user_id = old.id; 
+DELETE FROM reviews WHERE user_id = old.id; 
+END

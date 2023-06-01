@@ -12,7 +12,6 @@ CREATE TABLE users (
   address VARCHAR(90) NOT NULL,
   phone_number VARCHAR(20) NOT NULL,
   type ENUM ('admin', 'manager', 'student', 'teacher') NOT NULL,
-  total_books INT
 );
 
 CREATE TABLE schools (
