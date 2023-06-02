@@ -74,8 +74,13 @@ router.get("/:id", async (req, res) => {
     if (!book) {
       return res.status(404).send("Book not found");
     }
+    const row = await connection.query(`
+    SELECT ROUND(AVG(rating), 1) AS rating
+    FROM reviews
+    WHERE book_id = ?;
+    `, [req.params.id]);
     await connection.release();
-
+    book[0].rating = row[0].rating;
     return res.send(book[0]);
   } catch (error) {
     console.error(error);
@@ -336,6 +341,30 @@ router.post("/review/:id", async (req, res) => {
     console.error(error);
     return res.status(503).send("Database is currently unavailable.");
   }
-
+});
+router.get("/reviews/:id", async (req, res) => {
+  if (!req.session.loggedIn) {
+    return res.redirect("/");
+  }
+  const { id } = req.params;
+  const connection = await pool.getConnection();
+  try {
+      const book = await connection.query(`SELECT title FROM books WHERE id = ?;`, [id]);
+      const reviews = await connection.query(`
+          SELECT reviews.*, users.real_name AS user_name
+          FROM reviews 
+          INNER JOIN users ON reviews.user_id = users.id
+          WHERE reviews.book_id = ?
+          ORDER BY reviews.date DESC;
+      `, [id]);
+      return res.status(200).render("reviews", {
+        session: req.session,
+        title: book[0].title,
+        reviews
+      });
+  } catch (error) {
+    console.error(error);
+    return res.status(503).send("Database is currently unavailable.");
+  }
 });
 module.exports = router;

@@ -21,6 +21,20 @@
             </div>
             <div class="card mt-3">
               <ul class="list-group list-group-flush list-group-flush"></ul>
+                <div class="card-body">
+              <div class="row">
+                <div class="col-sm-4">
+                  <h6 class="mb-0">User Rating</h6>
+                </div>
+                <div class="col-sm-6 text-secondary">
+                  <span >  {{ book.rating }} / 5</span>
+                </div>
+              </div>
+              <br>
+              <div class="text-center">
+              <a :href="'/books/reviews/' + book.id" class="btn btn-primary btn-sm">Show more</a>
+                </div>
+              </div>
             </div>
           </div>
           <div class="col-md-8">
@@ -83,7 +97,6 @@
                 </div>
               </div>
             </div>
-            <div class="row gutters-sm">
               <div class="card mb-3">
                 <div class="card-body" style="margin-bottom: -31px;">
                   <h6 class="d-flex align-items-center mb-3"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -64 640 640" width="1em" height="1em" fill="currentColor" class="text-info mr-2" style="font-size: 20px;--bs-info-rgb: 235, 128, 52;">
@@ -121,7 +134,6 @@
                   </div>
                 </div>
               </div>
-            </div>
           </div>
         </div>
       </div>
