@@ -48,8 +48,13 @@
               <h6>Type</h6>
             </div>
             <select class="field" v-model="type">
+              <% if(session.user.type === "admin") {%>
+              <option value="admin">Admin</option>
+              <option value="manager">Manager</option>
+              <% } else { %>
               <option value="student">Student</option>
               <option value="teacher">Teacher</option>
+              <% } %>
             </select>
           </div>
           <div class="row">

@@ -6,6 +6,9 @@ const router = express.Router()
 router.get("/", async (req, res) => {
     if (!req.session.loggedIn) { return res.redirect('/'); }
     // Retrieve session information
+    if(req.session.user.type === 'admin') {
+        return res.redirect('/admin');
+    }
     const connection = await pool.getConnection();
 
     try {

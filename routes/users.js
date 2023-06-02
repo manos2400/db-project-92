@@ -79,7 +79,7 @@ router.post("/create", async (req, res) => {
   if (!req.session.loggedIn) {
     return res.redirect("/");
   }
-  if (req.session.user.type !== "manager") {
+  if (req.session.user.type !== "manager" || req.session.user.type !== "admin") {
     return res.status(403).send("You are not allowed to edit users.");
   }
   const { username, password, real_name, date_of_birth, email, address, phone_number, type } = req.body;
@@ -147,7 +147,7 @@ router.post("/delete/:id", async (req, res) => {
   if (!req.session.loggedIn) {
     return res.redirect("/");
   }
-  if (req.session.user.type !== "manager") {
+  if (req.session.user.type !== "manager" || req.session.user.type !== "admin") {
     return res.status(403).send("You are not allowed to delete users.");
   }
   try {
@@ -166,7 +166,7 @@ router.post("/deactivate/:id", async (req, res) => {
   if (!req.session.loggedIn) {
     return res.redirect("/");
   }
-  if (req.session.user.type !== "manager") {
+  if (req.session.user.type !== "manager" || req.session.user.type !== "admin") {
     return res.status(403).send("You are not allowed to deactivate users.");
   }
   try {
@@ -196,7 +196,7 @@ router.post("/pending/accept/:id", async (req, res) => {
   if (!req.session.loggedIn) {
     return res.redirect("/");
   }
-  if (req.session.user.type !== "manager") {
+  if (req.session.user.type !== "manager" || req.session.user.type !== "admin") {
     return res.status(403).send("You are not allowed to accept user applications.");
   }
   try {
@@ -228,7 +228,7 @@ router.post("/pending/deny/:id", async (req, res) => {
   if (!req.session.loggedIn) {
     return res.redirect("/");
   }
-  if (req.session.user.type !== "manager") {
+  if (req.session.user.type !== "manager" || req.session.user.type !== "admin") {
     return res.status(403).send("You are not allowed to deny user applications.");
   }
   try {

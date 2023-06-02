@@ -22,7 +22,7 @@
 </head>
 
 <body>
-    <% if(session.loggedIn) {%>
+    <% if(session.loggedIn && session.user.type !== "admin") {%>
         <%- include("includes/navbar.ejs") %>
     <% } %>
 <div class="container py-4 py-xl-5">
