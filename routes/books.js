@@ -316,4 +316,26 @@ router.post("/edit/:id", async (req, res) => {
   }
 
 });
+router.post("/review/:id", async (req, res) => {
+  if (!req.session.loggedIn) {
+    return res.redirect("/");
+  }
+  const { id } = req.params;
+  const { rating, review } = req.body;
+  const connection = await pool.getConnection();
+  try {
+    // Check if the user has already reviewed this book
+    const rows = await connection.query(`SELECT * FROM reviews WHERE user_id = ? AND book_id = ?;`, [req.session.user.id, id]);
+    if (rows.length > 0) {
+      await connection.query(`UPDATE reviews SET date= NOW() ,rating = ? , review = ? WHERE user_id = ? AND book_id = ?;`, [rating, review, req.session.user.id, id]);
+      return res.status(200).send("Review updated.");
+    }
+    await connection.query(`INSERT INTO reviews (user_id, book_id, date ,rating, review) VALUES (?, ?, NOW(), ?, ?);`, [req.session.user.id, id, rating, review]);
+    return res.status(200).send("Review added.");
+  } catch (error) {
+    console.error(error);
+    return res.status(503).send("Database is currently unavailable.");
+  }
+
+});
 module.exports = router;

@@ -18,6 +18,7 @@
   <link rel="stylesheet" href="/css/dialog.css">
   <link rel="stylesheet" href="/css/input.css">
   <link rel="stylesheet" href="/css/buttons.css">
+  <link rel="stylesheet" href="/css/review.css">
   <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
   <script src="https://unpkg.com/axios@1.4.0"></script>
   <script src="https://unpkg.com/vue@next"></script>
@@ -61,6 +62,7 @@
     <%- include('includes/bookInfo.ejs') %>
     <%- include('includes/newBook.ejs') %>
     <%- include('includes/editBook.ejs') %>
+    <%- include('includes/reviewBook.ejs') %>
     </div>
   </div>
   </div>
@@ -71,7 +73,8 @@
         return {
         newBookPanel: "dialog-container hidden",
         editBookPanel: "dialog-container hidden",
-        panelClass: "dialog-container hidden",
+        reviewBookPanel: "dialog-container hidden",
+        bookInfoPanel: "dialog-container hidden",
         book: null,
         message: null,
         searchTerm: {
@@ -79,6 +82,7 @@
           author: null,
           category: "Category"
         },
+        // Book data for new and edit book forms
         title: null,
         authors: null,
         publisher: null,
@@ -90,6 +94,9 @@
         description: null,
         category: null,
         quantity: null,
+        // Book data for review book form
+        rating: null,
+        review: null,
         };
       },
       methods: {
@@ -99,7 +106,7 @@
             .then(response => {
               // Handle success
               this.book = response.data;
-              this.panelClass = "dialog-container";
+              this.bookInfoPanel = "dialog-container";
             })
             .catch(error => {
               console.error('Error:', error);
@@ -107,7 +114,7 @@
         },
         closeDialog(type) {
           if (type === 'info') {
-            this.panelClass = "dialog-container hidden";
+            this.bookInfoPanel = "dialog-container hidden";
             this.book = null;
             this.message = null;
           } else if (type === 'new') {
@@ -139,6 +146,12 @@
             this.description = null;
             this.category = null,
             this.quantity = null;
+          } else if (type === 'review') {
+            this.reviewBookPanel = "dialog-container hidden";
+            this.book = null;
+            this.message = null;
+            this.rating = null;
+            this.review = null;
           }
         },
         reserveBook(id) {
@@ -199,7 +212,7 @@
             });
         },
         openEditBookPanel() {
-          this.panelClass = "dialog-container hidden";
+          this.bookInfoPanel = "dialog-container hidden";
           this.editBookPanel = "dialog-container";
           this.title = this.book.title;
           this.authors = this.book.authors;
@@ -212,6 +225,11 @@
           this.description = this.book.description;
           this.category = this.book.categories,
           this.quantity = this.book.quantity;
+        },
+        openReviewPanel() {
+          this.bookInfoPanel = "dialog-container hidden";
+          this.reviewBookPanel = "dialog-container";
+
         },
         editBook(id) {
           // Handle form submission logic here
@@ -229,6 +247,19 @@
           params.append('picture', this.picture);
           params.append('quantity', this.quantity);
           axios.post(`http://localhost:3000/books/edit/${id}`, params)
+            .then(response => {
+              // Handle success
+              this.message = response.data;
+            })
+            .catch(error => {
+              this.message = error.response.data;
+            });
+        },
+        reviewBook(id) {
+          const params = new URLSearchParams();
+          params.append('rating', this.rating);
+          params.append('review', this.review);
+          axios.post(`http://localhost:3000/books/review/${id}`, params)
             .then(response => {
               // Handle success
               this.message = response.data;

@@ -1,4 +1,4 @@
-<div v-if="book" v-bind:class="panelClass">
+<div v-if="book" v-bind:class="bookInfoPanel">
     <div class="dialog">
       <div class="main-body">
         <button class="btn-close" type="button" aria-label="Close" @click="closeDialog('info')" style="margin-bottom: 7px;"></button>
@@ -113,6 +113,7 @@
                     </p>
                     <div class="col align-items-center">
                         <a class="btn btn-primary ms-md-2" role="button" @click="reserveBook(book.id)">Reserve</a>
+                        <a class="btn btn-primary ms-md-2" role="button" @click="openReviewPanel(book.id)">Review</a>
                         <% if (session.user.type === "manager") {%>
                         <a class="btn btn-secondary ms-md-2" role="button" @click="openEditBookPanel()">Edit</a>
                         <% } %>
