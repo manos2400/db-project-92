@@ -113,8 +113,11 @@ router.post("/edit/:id", async (req, res) => {
   if (!req.session.loggedIn) {
     return res.redirect("/");
   }
-  if (req.session.user.type !== "manager") {
+  if (req.session.user.type === "student") {
     return res.status(403).send("You are not allowed to edit users.");
+  } 
+  if (req.session.user.type === "teacher" && !(req.session.user.id == req.params.id)) {
+    return res.status(403).send("You are allowed to edit only yourself.");
   }
   const { username, password, real_name, date_of_birth, email, address, phone_number } = req.body;
   const id = req.params.id;

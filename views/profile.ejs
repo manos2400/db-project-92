@@ -16,12 +16,13 @@
   <link rel="stylesheet" href="/css/Soft-UI-Aside-Navbar.css">
   <link rel="stylesheet" href="/css/dropdown.css">
   <link rel="stylesheet" href="/css/buttons.css">
+  <link rel="stylesheet" href="/css/dialog.css">
   <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
   <script src="https://unpkg.com/axios@1.4.0"></script>
   <script src="https://unpkg.com/vue@next"></script>
 <body>
   <%- include("includes/navbar.ejs") %>
-  <div class="container">
+  <div class="container" id="app">
     <div class="main-body">
       <nav aria-label="breadcrumb" class="main-breadcrumb"></nav>
       <div class="row gutters-sm">
@@ -79,12 +80,14 @@
               </div>
               <hr>
               <div id="app" class="row">
-                <div class="mb-3"><button v-if="!showForm" @click="showForm = true" class="btn btn-primary d-block w-100">Change Password</button></div>
+                <% if(user.type === 'teacher' || user.type === 'manager') {%>
+                <div class="mb-3"><button class="btn btn-primary d-block w-100" type="button" @click="openEditDialog(<%= user.id %>)">Edit Info</button></div>
+                <% } %>
+                <div class="mb-3"><button v-if="!showForm" @click="showForm = true" class="btn btn-secondary d-block w-100">Change Password</button></div>
                   <form v-if="showForm" @submit.prevent="submitForm" class="text-center">
                     <div class="mb-3"><input class="form-control" type="password" v-model="formData.newpass" placeholder="New Password"></div>
                     <div class="mb-3"><input class="form-control" type="password" v-model="formData.confirmpass" placeholder="Retype Password"></div>
-                    <p style="color: #df0b0b">{{ error }}</p>
-                    <p>{{ success }}</p>
+                    <p>{{ message }}</p>
                     <div class="mb-3"><button class="btn btn-primary d-block w-100" type="submit">Change Password</button></div>
                   </form>
               </div>
@@ -161,6 +164,9 @@
         </div>
       </div>
     </div>
+    <%if(user.type !== 'student') { %>
+    <%- include('includes/editUser.ejs') %>
+    <% } %>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
@@ -168,12 +174,21 @@
       data() {
         return {
           showForm: false,
+          editPanel: "dialog-container hidden",
           formData: {
             newpass: '',
             confirmpass: ''
           },
-          error: '',
-          success: ''
+          message: '',
+        // Edit Info
+        id: '',
+        username: '',
+        password: '',
+        real_name: '',
+        date_of_birth: '',
+        email: '',
+        address: '',
+        phone_number: '',
         };
       },
       methods: {
@@ -185,14 +200,63 @@
             axios.put('http://localhost:3000/password', params)
             .then(() => {
               // Handle success
-              this.error = '';
-              this.success = 'Password changed successfully.';
+              this.message = 'Password changed successfully.';
             })
             .catch(error => {
               console.error('Error:', error.response.data);
-              this.success = '';
-              this.error = error.response.data;
+              this.message = error.response.data;
               // Handle error
+            });
+        },
+        closeDialog() {
+          this.editPanel = "dialog-container hidden";
+          this.message = '';
+          this.username = '';
+          this.password = '';
+          this.real_name = '';
+          this.date_of_birth = '';
+          this.email = '';
+          this.address = '';
+          this.phone_number = '';
+        },
+        openEditDialog(userID) {
+          this.id = userID;
+          this.message = '';
+          // Get the user data from the server
+          axios.get('http://localhost:3000/users/' + userID)
+            .then(response => {
+              // Handle success
+              this.username = response.data.username;
+              this.password = response.data.password;
+              this.real_name = response.data.real_name;
+              this.date_of_birth = response.data.date_of_birth;
+              this.email = response.data.email;
+              this.address = response.data.address;
+              this.phone_number = response.data.phone_number;
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              // Handle error
+            });
+          // Show the dialog
+          this.editPanel = "dialog-container";
+        },
+        editUser() {
+          const params = new URLSearchParams();
+          params.append('username', this.username);
+          params.append('password', this.password);
+          params.append('real_name', this.real_name);
+          params.append('date_of_birth', this.date_of_birth);
+          params.append('email', this.email);
+          params.append('address', this.address);
+          params.append('phone_number', this.phone_number);
+          axios.post('http://localhost:3000/users/edit/' + this.id, params)
+            .then(response => {
+              this.message = response.data;
+            })
+            .catch(error => {
+              console.log('Error:', error);
+              this.message = error.response.data;
             });
         }
       }
