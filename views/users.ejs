@@ -216,6 +216,9 @@
           params.append('email', this.email);
           params.append('address', this.address);
           params.append('phone_number', this.phone_number);
+          if(school_id && this.type === 'manager') {
+            params.append('school_id', this.school_id);
+          }
           axios.post('http://localhost:3000/users/edit/' + this.user.id, params)
             .then(response => {
               this.message = response.data;
