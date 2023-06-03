@@ -17,6 +17,9 @@
   <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
   <link rel="stylesheet" href="/css/buttons.css">
   <link rel="stylesheet" href="/css/dropdown.css">
+  <link rel="stylesheet" href="/css/input.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
+  <script src="https://unpkg.com/vue@next"></script>
   <script src="https://code.jquery.com/jquery-3.7.0.slim.min.js" integrity="sha256-tG5mcZUtJsZvyKAxYLVXrmjKBVLd6VpVccqz/r4ypFE=" crossorigin="anonymous"></script>
   <script src="https://cdn.datatables.net/v/bs5/dt-1.13.4/datatables.min.js"></script>
   <link href="https://cdn.datatables.net/v/dt/dt-1.13.4/datatables.min.css" rel="stylesheet"/>
@@ -24,7 +27,124 @@
 
 <body>
   <%- include("../includes/navbar.ejs") %>
+  <div class="container" id="app">
+    <br/>
+    <div class="row">
+    <h5> Find authors per category and Teachers that loaned books from this category</h5>
+    <pre>
 
+    </pre>
+    </div>
+    <div class="row">
+    <br>
+    <div class="form-inline">
+      <form @submit.prevent="search('category')">
+        <select class="input" v-model="searchTerm.category" @change="search('category')">
+          <option selected disabled>Category</option>
+          <% categories.forEach(category => { %>
+          <option value="<%= category.name %>"><%= category.name %></option>
+          <% }) %>
+        </select>
+      </form>
+      </div>
+      <div class="row">
+        <div class="col">
+          <table id="authors" class="table table-striped ">
+            <thead>
+              <tr>
+                <th>Author</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="author in category_authors">
+                <td>{{ author.name }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="col">
+          <table id="teachers" class="table table-striped ">
+            <thead>
+              <tr>
+                <th>Teacher</th>
+                <th>Loans</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="teacher in category_teachers">
+                <td>{{ teacher.name }}</td>
+                <td>{{ teacher.loans }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    </div>
+    <script>
+      const app = Vue.createApp({
+        data() {
+          return {
+          searchTerm: {
+            category: "Category",
+          },
+          // 3.1.1
+          category_authors: null,
+          category_teachers: null,
+          }
+        },
+        methods: {
+          search() {
+            axios.get('/admin/query/category/authors?category=' + this.searchTerm.category)
+              .then(response => {
+                this.category_authors = response.data;
+              })
+              .catch(error => {
+                console.log(error)
+              });
+            axios.get('/admin/query/category/teacher-loans?category=' + this.searchTerm.category)
+              .then(response => {
+                this.category_teachers = response.data;
+              })
+              .catch(error => {
+                console.log(error)
+              });
+            }
+
+        },
+        mounted() {
+          $('#authors').DataTable({
+            paging: false,
+            searching: false,
+            info: false,
+          });
+          $('#teachers').DataTable({
+            paging: false,
+            searching: false,
+            info: false,
+          });
+        },
+        beforeUpdate() {
+          $('#authors').DataTable().destroy();
+          $('#teachers').DataTable().destroy();
+        },
+        updated() {
+          $('#authors').DataTable({
+            paging: false,
+            searching: false,
+            info: false,
+          });
+          $('#teachers').DataTable({
+            paging: false,
+            searching: false,
+            info: false,
+          });
+        }
+      });
+      app.mount('#app')
+    </script>
 </body>
 
 </html>
