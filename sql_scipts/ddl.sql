@@ -22,8 +22,6 @@ CREATE TABLE schools (
   phone_number VARCHAR(20) NOT NULL,
   email VARCHAR(90) NOT NULL,
   principal_name VARCHAR(90) NOT NULL,
-  library_manager_id INT NOT NULL,
-  CONSTRAINT lib_manager FOREIGN KEY (library_manager_id) REFERENCES users(id)
 );
 
 CREATE TABLE pending_users (

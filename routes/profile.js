@@ -10,10 +10,11 @@ router.get("/", async (req, res) => {
 
         const connection = await pool.getConnection();
         const school = await connection.query(`
-            SELECT schools.*, users.real_name AS manager_name
-            FROM schools 
-            INNER JOIN users ON schools.library_manager_id = users.id 
-            WHERE schools.id = ?;
+            SELECT s.*, u.real_name AS manager_name
+            FROM schools s
+            JOIN school_users su ON s.id = su.school_id
+            JOIN users u ON u.id = su.user_id
+            WHERE u.type = 'manager' AND s.id = ?; 
         `, [req.session.school.id]);
         if (!school[0]) {
             throw new Error('School not found');
