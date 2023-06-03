@@ -14,4 +14,6 @@ router.use("/users", require("./admin/users.js"));
 
 router.use("/schools", require("./admin/schools.js"));
 
+router.use("/loans", require("./admin/loans.js"));
+
 module.exports = router;
