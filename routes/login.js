@@ -43,7 +43,7 @@ router.post("/", async (req, res) => {
         console.error(error);
         return res.status(500).send('Internal server error');
     } finally {
-        connection.release();
+        await connection.release();
     }
 })
 
