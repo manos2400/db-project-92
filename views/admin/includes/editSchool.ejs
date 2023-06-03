@@ -1,0 +1,64 @@
+<div v-bind:class="editPanel">
+    <div class="dialog">
+      <div class="main-body">
+        <button class="btn-close" type="button" aria-label="Close" @click="closeDialog('edit')" style="margin-bottom: 7px;"></button>
+        <br>
+        <nav class="main-breadcrumb" aria-label="breadcrumb"></nav>
+        <div class="row d-flex">
+          <div class="col-md mb-3">
+                <div class="row">
+                  <div class="col-sm-4">
+                    <h6>Name</h6>
+                  </div>
+                  <div class="col-sm-3"><input type="text" v-model="name" /></div>
+                </div>
+                <hr />
+                <div class="row">
+                  <div class="col-sm-4">
+                    <h6>Address</h6>
+                  </div>
+                  <div class="col-sm-3"><input type="text" v-model="address"/></div>
+                </div>
+                <hr />
+                <div class="row">
+                  <div class="col-sm-4">
+                    <h6>City</h6>
+                  </div>
+                  <div class="col-sm-3"><input type="text" v-model="city"/></div>
+                </div>
+                <hr />
+                <div class="row">
+                  <div class="col-sm-4">
+                    <h6>Phone Number</h6>
+                  </div>
+                  <div class="col-sm-3"><input type="text" v-model="phone_number"/></div>
+                </div>
+                <hr />
+                <div class="row">
+                  <div class="col-sm-4">
+                    <h6>Email</h6>
+                  </div>
+                  <div class="col-sm-3"><input type="text" v-model="email"/></div>
+                </div>
+                <hr />
+                <div class="row">
+                    <div class="col-sm-4">
+                      <h6>Principal</h6>
+                    </div>
+                    <div class="col-sm-3"><input type="text" v-model="principal_name"/></div>
+                  </div>
+              <div class="row">
+                <div class="col-sm-12">
+                  <hr /><button class="btn btn-primary" @click="editSchool()">Submit</button>
+                </div>
+              </div>
+          </div>
+          <div class="row">
+            <p>
+              {{ message }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>

@@ -1,0 +1,66 @@
+<div v-if="school" :class="infoPanel">
+    <div class="dialog">
+      <div class="main-body">
+        <button class="btn-close" type="button" aria-label="Close" @click="closeDialog('info')" style="margin-bottom: 7px;"></button>
+        <nav aria-label="breadcrumb" class="main-breadcrumb"></nav>
+        <div class="row gutters-sm">
+            <div class="col mb-3">
+            <div class="row">
+              <div class="col-sm-4">
+                <h6 class="mb-0">Name</h6>
+              </div>
+              <div class="col-md-10 text-secondary"><span>
+                  {{ school.name }}</span></div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-4">
+                <h6 class="mb-0">Address</h6>
+              </div>
+              <div class="col-md-10 text-secondary"><span>
+                  {{ school.address }}</span></div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-4">
+                <h6 class="mb-0">City</h6>
+              </div>
+              <div class="col-md-10 text-secondary"><span>
+                  {{ school.city }}</span></div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-4">
+                <h6 class="mb-0">Phone</h6>
+              </div>
+              <div class="col-md-10 text-secondary"><span>
+                  {{ school.phone_number }}</span></div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-4">
+                <h6 class="mb-0">Principal</h6>
+              </div>
+              <div class="col-md-10 text-secondary"><span>
+                  {{ school.principal_name }}</span></div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-8">
+                <h6 class="mb-0">Library Manager</h6>
+              </div>
+              <div class="col-md-10 text-secondary"><span>
+                  {{ school.manager_name }}</span></div>
+            </div>
+            <hr>
+              <div class="d-flex justify-content-center">
+                <form name="editForm">
+                  <input type="hidden">
+                  <button class="btn btn-primary ms-md-2" type="button" @click="openEditDialog">Edit</button>
+                </form>
+              </div>
+              </div>
+              </div>
+      </div>
+    </div>
+  </div>
