@@ -11,7 +11,7 @@ router.get("/", async (req, res) => {
     // Retrieve session information
     const connection = await pool.getConnection();
 
-    let loans, oldLoans;
+    let loans, oldLoans, delayedLoans;
     try {
         if(req.query.name) {
             loans = await connection.query(`
