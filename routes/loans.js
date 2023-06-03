@@ -109,7 +109,7 @@ manageRouter.post("/add/:book_id/:user_id", async (req, res) => {
 
         await connection.query(`
             INSERT INTO loans (school_id, book_id, user_id, date_out, date_due)
-            VALUES (?, ?, ?, CURRENT_DATE(), DATE_ADD(CURRENT_DATE(), INTERVAL 14 DAY));`, [req.session.school.id, book_id, user_id]);
+            VALUES (?, ?, ?, CURRENT_DATE(), DATE_ADD(CURRENT_DATE(), INTERVAL 7 DAY));`, [req.session.school.id, book_id, user_id]);
     } catch (error) {
         console.error(error);
         return res.status(500).send('Database error occurred');
