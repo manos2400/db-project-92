@@ -88,6 +88,7 @@ router.post("/create", async (req, res) => {
     return res.status(403).send("You are not allowed to create users.");
   }
   const { username, password, real_name, date_of_birth, email, address, phone_number, type } = req.body;
+  date_of_birth = moment(date_of_birth).format();
   try {
     const connection = await pool.getConnection();
     // Check if the username is already taken
@@ -134,6 +135,7 @@ router.post("/edit/:id", async (req, res) => {
     return res.status(403).send("You are allowed to edit only yourself.");
   }
   const { username, password, real_name, date_of_birth, email, address, phone_number } = req.body;
+  date_of_birth = moment(date_of_birth).format();
   const id = req.params.id;
   try {
     const connection = await pool.getConnection();
