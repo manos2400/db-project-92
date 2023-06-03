@@ -11,7 +11,7 @@ const pool = mariadb.createPool({
 
 function backupDatabase() {
     return new Promise((resolve, reject) => {
-    const backupCommand = `mysqldump -u ${process.env.DB_USER} -p${process.env.DB_PASS} ${process.env.DB_NAME} > backup.sql`;
+    const backupCommand = `/opt/lampp/bin/mysqldump -u ${process.env.DB_USER} -p${process.env.DB_PASS} ${process.env.DB_NAME} > backup.sql`;
     
     exec(backupCommand, (error, stdout, stderr) => {
       if (error) {
@@ -26,7 +26,7 @@ function backupDatabase() {
 function restoreDatabase() {
     return new Promise((resolve, reject) => {
 
-    const restoreCommand = `mysql -u ${process.env.DB_USER} -p${process.env.DB_PASS} ${process.env.DB_NAME} < backup.sql`;
+    const restoreCommand = `/opt/lampp/bin/mysql -u ${process.env.DB_USER} -p${process.env.DB_PASS} ${process.env.DB_NAME} < backup.sql`;
     
     exec(restoreCommand, (error, stdout, stderr) => {
         if (error) {
