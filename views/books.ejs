@@ -42,6 +42,11 @@
           <% }) %>
         </select>
       </form>
+      <% if (session.user.type === 'manager') {%>
+      <form @submit.prevent="search('quantity')">
+        <input type="number" v-model="searchTerm.quantity" class="input" @keyup.enter="search('quantity')" placeholder="Quantity">
+      </form>
+      <% } %>
     </div>
     <div class="main-body">
       <div class="books">
@@ -80,6 +85,7 @@
         searchTerm: {
           title: null,
           author: null,
+          quantity: null,
           category: "Category"
         },
         // Book data for new and edit book forms
@@ -173,6 +179,8 @@
             name = this.searchTerm.author.replace(' ', '%20');
           } else if (type === 'category') {
             name = this.searchTerm.category.replace(' ', '%20');
+          } else if (type === 'quantity') {
+            name = this.searchTerm.quantity;
           }
           window.location.href = `/books?${type}=${name}`;
         },

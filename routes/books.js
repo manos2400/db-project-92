@@ -37,6 +37,11 @@ router.get("/", async (req, res) => {
         `SELECT id, picture FROM school_books_view WHERE school_id = ? AND categories LIKE ?;`,
         [req.session.school.id, `%${req.query.category}%`]
       );
+    } else if(req.query.quantity) {
+      books = await connection.query(
+        `SELECT id, picture FROM school_books_view WHERE school_id = ? AND quantity = ?;`,
+        [req.session.school.id, req.query.quantity]
+      );
     } else {
       books = await connection.query(
         `SELECT id, picture FROM school_books_view WHERE school_id = ?;`,
@@ -58,7 +63,6 @@ router.get("/", async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    await connection.release();
     return res.status(503).send("Database is currently unavailable.");
   }
 });
