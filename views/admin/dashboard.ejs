@@ -30,7 +30,7 @@
   <div class="container" id="app">
     <br/>
     <div class="row">
-    <h5> Find authors per category and Teachers that loaned books from this category</h5>
+    <h5>Find authors per category and Teachers that loaned books from this category</h5>
     <pre>
 
     </pre>
@@ -81,7 +81,150 @@
       </div>
 
     </div>
+    <div class="row">
+      <pre>
 
+
+      </pre>
+    <h5>Top young teachers</h5>
+    </div>
+    <div class="row">
+    <br>
+      <div class="row">
+        <div class="col">
+          <table id="young-teachers" class="table table-striped ">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Age</th>
+                <th>Loans</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="teacher in young_teachers">
+                <td>{{ teacher.name }}</td>
+                <td>{{ teacher.age }}</td>
+                <td>{{ teacher.books_count }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <pre>
+
+
+      </pre>
+    <h5>No Loans Authors</h5>
+    </div>
+    <div class="row">
+    <br>
+      <div class="row">
+        <div class="col">
+          <table id="no-loans" class="table table-striped ">
+            <thead>
+              <tr>
+                <th>Name</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="author in no_loans_authors">
+                <td>{{ author.name }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <pre>
+
+
+      </pre>
+    <h5>Managers with equal loans this year</h5>
+    </div>
+    <div class="row">
+    <br>
+      <div class="row">
+        <div class="col">
+          <table id="equal-loans" class="table table-striped ">
+            <thead>
+              <tr>
+                <th>Manager 1</th>
+                <th>Manager 2</th>
+                <th>Total Loans</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="manager in equal_loans">
+                <td>{{ manager.manager1 }}</td>
+                <td>{{ manager.manager2 }}</td>
+                <td>{{ manager.loans }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <pre>
+
+
+      </pre>
+    <h5>Category Pairs</h5>
+    </div>
+    <div class="row">
+    <br>
+      <div class="row">
+        <div class="col">
+          <table id="category-pairs" class="table table-striped ">
+            <thead>
+              <tr>
+                <th>Category 1</th>
+                <th>Category 2</th>
+                <th>Loans</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="pair in category_pairs">
+                <td>{{ pair.category1 }}</td>
+                <td>{{ pair.category2 }}</td>
+                <td>{{ pair.loan_count }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <pre>
+
+
+      </pre>
+    <h5>Authors with at least 5 books less than top author</h5>
+    </div>
+    <div class="row">
+    <br>
+      <div class="row">
+        <div class="col">
+          <table id="five-books-less" class="table table-striped ">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="author in five_books_less">
+                <td>{{ author.id }}</td>
+                <td>{{ author.name }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
     </div>
     <script>
       const app = Vue.createApp({
@@ -90,9 +233,19 @@
           searchTerm: {
             category: "Category",
           },
-          // 3.1.1
+          // 3.1.2
           category_authors: null,
           category_teachers: null,
+          // 3.1.3
+          young_teachers: null,
+          // 3.1.4
+          no_loans_authors: null,
+          // 3.1.5
+          equal_loans: null,
+          // 3.1.6
+          category_pairs: null,
+          // 3.1.7
+          five_books_less: null,
           }
         },
         methods: {
@@ -125,10 +278,51 @@
             searching: false,
             info: false,
           });
+
+          axios.get('/admin/query/authors/no-loans')
+              .then(response => {
+                this.no_loans_authors = response.data;
+              })
+              .catch(error => {
+                console.log(error)
+              });
+          axios.get('/admin/query/young-teachers-top')
+              .then(response => {
+                this.young_teachers = response.data;
+              })
+              .catch(error => {
+                console.log(error)
+              });
+          axios.get('/admin/query/category/top-pairs')
+              .then(response => {
+                this.category_pairs = response.data;
+              })
+              .catch(error => {
+                console.log(error)
+              });
+          axios.get('/admin/query/authors/five-books-less')
+              .then(response => {
+                this.five_books_less = response.data;
+              })
+              .catch(error => {
+                console.log(error)
+              });
+          axios.get('/admin/query/managers/equal-loans')
+              .then(response => {
+                this.equal_loans = response.data;
+              })
+              .catch(error => {
+                console.log(error)
+              });
         },
         beforeUpdate() {
           $('#authors').DataTable().destroy();
           $('#teachers').DataTable().destroy();
+          $('#young-teachers').DataTable().destroy();
+          $('#no-loans').DataTable().destroy();
+          $('#category-pairs').DataTable().destroy();
+          $('#five-books-less').DataTable().destroy();
+          $('#equal-loans').DataTable().destroy();
         },
         updated() {
           $('#authors').DataTable({
@@ -140,6 +334,32 @@
             paging: false,
             searching: false,
             info: false,
+          });
+          $('#young-teachers').DataTable({
+            paging: false,
+            searching: false,
+            info: false,
+            autowidth: true,
+          });
+          $('#no-loans').DataTable({
+            searching: false,
+            info: false,
+            lengthChange: false,
+          });
+          $('#category-pairs').DataTable({
+            paging: false,
+            searching: false,
+            info: false,
+          });
+          $('#five-books-less').DataTable({
+            searching: false,
+            info: false,
+            lengthChange: false,
+          });
+          $('#equal-loans').DataTable({
+            paging: false,
+            searching: false,
+            info: false
           });
         }
       });

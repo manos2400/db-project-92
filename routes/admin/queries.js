@@ -54,16 +54,16 @@ router.get("/young-teachers-top", async (req, res) => {
     try {
         const connection = await pool.getConnection();
         const teachers = await connection.query(`
-        SELECT u.real_name AS teacher_name, COUNT(*) AS books_count
+        SELECT u.real_name AS name, CAST(COUNT(*) AS CHAR) AS books_count, CAST(TIMESTAMPDIFF(YEAR, u.date_of_birth, CURDATE()) AS CHAR) AS age
         FROM loans l
         INNER JOIN users u ON l.user_id = u.id
-        WHERE u.type = 'teacher' AND u.age < 40
+        WHERE u.type = 'teacher' AND TIMESTAMPDIFF(YEAR, u.date_of_birth, CURDATE()) < 40
         GROUP BY u.id
         ORDER BY books_count DESC
         LIMIT 10;
         `);
         await connection.release();
-
+        // Convert BigInt to string
         return res.send(teachers);
     } catch (error) {
         console.error(error);
@@ -76,12 +76,12 @@ router.get("/authors/no-loans", async (req, res) => {
     try {
         const connection = await pool.getConnection();
         const authors = await connection.query(`
-        SELECT a.name AS author_name
+        SELECT a.name AS name
         FROM authors a
         LEFT JOIN book_authors ba ON a.id = ba.author_id
         LEFT JOIN books b ON ba.book_id = b.id
         LEFT JOIN loans l ON b.id = l.book_id
-        WHERE l.id IS NULL
+        WHERE l.user_id IS NULL
         GROUP BY a.id;
         `);
         await connection.release();
@@ -98,7 +98,7 @@ router.get("/category/top-pairs", async (req, res) => {
     try {
         const connection = await pool.getConnection();
         const pairs = await connection.query(`
-        SELECT c1.name, c2.name, COUNT(*) AS loan_count
+        SELECT c1.name AS category1, c2.name AS category2, CAST(COUNT(*) AS CHAR) AS loan_count
         FROM books b
         JOIN book_categories bc1 ON b.id = bc1.book_id
         JOIN book_categories bc2 ON bc1.book_id = bc2.book_id AND bc1.category_id < bc2.category_id
@@ -145,6 +145,25 @@ router.get("/authors/five-books-less", async (req, res) => {
         console.error(error);
         return res.status(503).send("Database is currently unavailable.");
     }  
+});
+
+router.get("/managers/equal-loans", async (req, res) => {
+    if (!req.session.loggedIn || req.session.user.type !== "admin") { return res.redirect('/'); }
+    try {
+        const connection = await pool.getConnection();
+        const managers = await connection.query(`
+        SELECT s1.manager_name AS manager1, s2.manager_name AS manager2, CAST(s1.total_loans AS CHAR) AS total_loans
+        FROM school_loan_view s1
+        JOIN school_loan_view s2
+        WHERE s1.total_loans = s2.total_loans AND s1.school_name != s2.school_name AND s1.total_loans > 20
+        `);
+        await connection.release();
+
+        return res.send(managers);
+    } catch (error) {
+        console.error(error);
+        return res.status(503).send("Database is currently unavailable.");
+    } 
 });
 
 module.exports = router;

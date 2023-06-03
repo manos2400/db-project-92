@@ -157,6 +157,15 @@ SELECT books.*, sb.school_id, sb.quantity, sb.available
 FROM books_view books
 INNER JOIN school_books sb on books.id = sb.book_id;
 
+CREATE VIEW school_loan_view AS
+SELECT s.name AS school_name, u.real_name AS manager_name, COUNT(l.school_id) AS total_loans
+FROM schools s
+JOIN school_users su ON s.id = su.school_id
+JOIN users u ON su.user_id = u.id
+JOIN loans l ON s.id = l.school_id
+WHERE u.type = 'manager' AND YEAR(l.date_out) = YEAR(CURDATE())
+GROUP BY s.name, u.real_name;
+
 -- Procs
 DELIMITER //
 CREATE PROCEDURE `GetUserStats`(IN `userId` INT, OUT `reservationCount` INT, OUT `loanCount` INT, OUT `activeLoanCount` INT, OUT `reviewCount` INT)
