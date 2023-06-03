@@ -17,7 +17,7 @@ router.get("/", async (req, res) => {
             loans = await connection.query(`
             SELECT *
             FROM loans_view
-            WHERE school_id = ? AND date_in IS NULL AND real_name LIKE ? AND date_due > NOW();
+            WHERE school_id = ? AND date_in IS NULL AND real_name LIKE ? AND date_due > CURRENT_DATE();
         `, [req.session.school.id, `%${req.query.name}%`]);
         oldLoans = await connection.query(`
             SELECT *
@@ -27,13 +27,13 @@ router.get("/", async (req, res) => {
         delayedLoans = await connection.query(`
             SELECT *
             FROM loans_view
-            WHERE school_id = ? AND date_in IS NULL AND date_due < NOW() AND real_name LIKE ?;
+            WHERE school_id = ? AND date_in IS NULL AND date_due < CURRENT_DATE() AND real_name LIKE ?;
         `, [req.session.school.id, `%${req.query.name}%`]);
         } else {
             loans = await connection.query(`
             SELECT *
             FROM loans_view
-            WHERE school_id = ? AND date_in IS NULL AND date_due > NOW();
+            WHERE school_id = ? AND date_in IS NULL AND date_due > CURRENT_DATE();
         `, [req.session.school.id]);
         oldLoans = await connection.query(`
             SELECT *
@@ -43,7 +43,7 @@ router.get("/", async (req, res) => {
         delayedLoans = await connection.query(`
             SELECT *
             FROM loans_view
-            WHERE school_id = ? AND date_in IS NULL AND date_due < NOW();
+            WHERE school_id = ? AND date_in IS NULL AND date_due < CURRENT_DATE();
         `, [req.session.school.id]);
         }
     } catch (error) {
@@ -73,7 +73,7 @@ manageRouter.post("/return/:book_id/:user_id", async (req, res) => {
     try {
         await connection.query(`
             UPDATE loans
-            SET date_in = NOW()
+            SET date_in = CURRENT_DATE()
             WHERE school_id = ? AND book_id = ? AND user_id = ?;`, [req.session.school.id, book_id, user_id]);
     } catch (error) {
         console.error(error);
@@ -102,14 +102,14 @@ manageRouter.post("/add/:book_id/:user_id", async (req, res) => {
             return res.status(403).send('The user has an active reservation for this book, you may accept it.');
         }
         // Check if the user has delayed books
-        const loans = await connection.query(`SELECT * FROM loans WHERE school_id = ? AND book_id = ? AND user_id = ? AND date_due < NOW();`, [req.session.school.id, book_id, user_id]);
+        const loans = await connection.query(`SELECT * FROM loans WHERE school_id = ? AND book_id = ? AND user_id = ? AND date_due < CURRENT_DATE();`, [req.session.school.id, book_id, user_id]);
         if (loans.length > 0) {
             return res.status(403).send('The user have not returned a book in time.');
         }
 
         await connection.query(`
             INSERT INTO loans (school_id, book_id, user_id, date_out, date_due)
-            VALUES (?, ?, ?, NOW(), DATE_ADD(NOW(), INTERVAL 14 DAY));`, [req.session.school.id, book_id, user_id]);
+            VALUES (?, ?, ?, CURRENT_DATE(), DATE_ADD(CURRENT_DATE(), INTERVAL 14 DAY));`, [req.session.school.id, book_id, user_id]);
     } catch (error) {
         console.error(error);
         return res.status(500).send('Database error occurred');

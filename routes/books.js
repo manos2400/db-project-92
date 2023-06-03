@@ -104,12 +104,12 @@ router.post("/reserve/:book_id", async (req, res) => {
             return res.status(403).send('You have already reserved this book.');
         }
         // Check if the user has delayed books
-        const loans = await connection.query(`SELECT * FROM loans WHERE school_id = ? AND book_id = ? AND user_id = ? AND date_due < NOW();`, [req.session.school.id, book_id, req.session.user.id]);
+        const loans = await connection.query(`SELECT * FROM loans WHERE school_id = ? AND book_id = ? AND user_id = ? AND date_due < CURRENT_DATE();`, [req.session.school.id, book_id, req.session.user.id]);
         if (loans.length > 0) {
             return res.status(403).send('You have not returned a book in time.');
         }
         // Check if the user has reached the maximum number of reservations
-        const reservations = await connection.query(`SELECT * FROM reservations WHERE school_id = ? AND user_id = ? AND WEEK(date) = WEEK(NOW());`, [req.session.school.id, req.session.user.id]);
+        const reservations = await connection.query(`SELECT * FROM reservations WHERE school_id = ? AND user_id = ? AND WEEK(date) = WEEK(CURRENT_DATE());`, [req.session.school.id, req.session.user.id]);
         switch (req.session.user.type) {
             case 'student':
                 if (reservations.length >= 2) {
@@ -122,7 +122,7 @@ router.post("/reserve/:book_id", async (req, res) => {
                 }
                 break;            
         }
-        await connection.query(`INSERT INTO reservations (school_id, book_id, user_id, date, date_due) VALUES (?, ?, ?, NOW(), DATE_ADD(NOW(), INTERVAL 7 DAY));`, [req.session.school.id, book_id, req.session.user.id]);
+        await connection.query(`INSERT INTO reservations (school_id, book_id, user_id, date, date_due) VALUES (?, ?, ?, CURRENT_DATE(), DATE_ADD(CURRENT_DATE(), INTERVAL 7 DAY));`, [req.session.school.id, book_id, req.session.user.id]);
     } catch (error) {
         console.error(error);
         return res.status(500).send('Database error occurred');
@@ -332,10 +332,10 @@ router.post("/review/:id", async (req, res) => {
     // Check if the user has already reviewed this book
     const rows = await connection.query(`SELECT * FROM reviews WHERE user_id = ? AND book_id = ?;`, [req.session.user.id, id]);
     if (rows.length > 0) {
-      await connection.query(`UPDATE reviews SET date= NOW() ,rating = ? , review = ? WHERE user_id = ? AND book_id = ?;`, [rating, review, req.session.user.id, id]);
+      await connection.query(`UPDATE reviews SET date= CURRENT_DATE() ,rating = ? , review = ? WHERE user_id = ? AND book_id = ?;`, [rating, review, req.session.user.id, id]);
       return res.status(200).send("Review updated.");
     }
-    await connection.query(`INSERT INTO reviews (user_id, book_id, date ,rating, review) VALUES (?, ?, NOW(), ?, ?);`, [req.session.user.id, id, rating, review]);
+    await connection.query(`INSERT INTO reviews (user_id, book_id, date ,rating, review) VALUES (?, ?, CURRENT_DATE(), ?, ?);`, [req.session.user.id, id, rating, review]);
     return res.status(200).send("Review added.");
   } catch (error) {
     console.error(error);

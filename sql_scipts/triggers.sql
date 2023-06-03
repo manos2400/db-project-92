@@ -19,7 +19,7 @@ CREATE TRIGGER `unwait_reservations` AFTER UPDATE ON `school_books`
 FOR EACH ROW 
 BEGIN 
 IF NEW.available > 0 THEN UPDATE reservations 
-SET waited = FALSE, date = NOW(), date_due = DATE_ADD(NOW(), INTERVAL 7 DAY) 
+SET waited = FALSE, date = CURRENT_DATE(), date_due = DATE_ADD(CURRENT_DATE(), INTERVAL 7 DAY) 
 WHERE book_id = NEW.book_id AND school_id = NEW.school_id; 
 END IF; 
 END
