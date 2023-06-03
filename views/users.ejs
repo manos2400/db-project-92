@@ -43,7 +43,10 @@
           <th>ID</th>
           <th>Name</th>
           <th>Role</th>
-            <th>Manage</th>
+          <% if (session.user.type === 'admin') {%>
+          <th>School</th>  
+          <% } %>
+          <th>Manage</th>
         </tr>
       </thead>
       <tbody>
@@ -52,6 +55,9 @@
           <td><%= user.id %></td>
           <td><%= user.name %></td>
           <td><%= user.type %></td>
+          <% if (session.user.type === 'admin') {%>
+            <td><%= user.school_name %></td>
+            <% } %>
           <td>
             <div class="d-flex">
             <form name="acceptForm" method="POST" action="/users/pending/accept/<%=user.id%>">
@@ -77,6 +83,9 @@
           <th>ID</th>
           <th>Name</th>
           <th>Role</th>
+          <% if (session.user.type === 'admin') {%>
+          <th>School</th>
+          <% } %>
           <th>Manage</th>
         </tr>
       </thead>
@@ -86,8 +95,11 @@
             <td><%= user.id %></td>
             <td><%= user.name %></td>
             <td><%= user.type %></td>
+            <% if (session.user.type === 'admin') {%>
+              <td><%= user.school_name %></td>
+              <% } %>
             <td>
-                <button class="btn btn-primary ms-md-2" type="button" @click="getUserData(<%= user.id %>)">Show More</button>
+                <button class="btn btn-primary ms-md-2" type="button" @click="getUserData(<%= user.id %>)">More</button>
             </td>
             </tr>
           <% }); %>
@@ -122,6 +134,7 @@
         email: '',
         address: '',
         phone_number: '',
+        school_id: '',
         // Create Info (same as edit +)
         type: ''
         }
@@ -222,6 +235,9 @@
           params.append('address', this.address);
           params.append('phone_number', this.phone_number);
           params.append('type', this.type);
+          if(school_id && this.type === 'manager') {
+            params.append('school_id', this.school_id);
+          }
           axios.post('http://localhost:3000/users/create', params)
             .then(response => {
               this.message = response.data;
@@ -242,8 +258,8 @@
         columnDefs: [
           { "width": "5%", "targets": 0 },
           { "width": "40%", "targets": 1 },
-          { "width": "20%", "targets": 2 },
-          { "width": "35%", "targets": 3 }
+          { "width": "15%", "targets": 2 },
+          { "width": "30%", "targets": 3 }
         ]
       });
       $('#users').DataTable({
@@ -253,8 +269,8 @@
         columnDefs: [
           { "width": "5%", "targets": 0 },
           { "width": "40%", "targets": 1 },
-          { "width": "20%", "targets": 2 },
-          { "width": "35%", "targets": 3 }
+          { "width": "15%", "targets": 2 },
+          { "width": "30%", "targets": 3 }
         ]
       });
     });

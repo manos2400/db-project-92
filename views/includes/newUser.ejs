@@ -29,6 +29,18 @@
             </div>
             <input class="field" type="date" v-model="date_of_birth" />
           </div>
+          <% if(session.user.type === "admin") {%>
+          <div class="row">
+            <div class="col-sm-4">
+              <h6>School</h6>
+            </div>
+            <select class="field" v-model="school_id">
+              <% schools.forEach(school => { %>
+              <option value="<%= school.id %>"><%= school.name %></option>
+              <% }) %>
+            </select>
+          </div>
+          <% } %>
         </div>
         <div class="col-md mb-3">
           <div class="row">

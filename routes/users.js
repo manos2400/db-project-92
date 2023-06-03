@@ -98,10 +98,19 @@ router.post("/create", async (req, res) => {
       VALUES (?, ?, ?, ?, ?, ?, ?, ?);
     `, [username, password, real_name, date_of_birth, email, address, phone_number, type]);
     // Add the user to the school
-    await connection.query(`
+    if (req.session.user.type === "admin" && req.body.type !== "admin") {
+      // Admins create managers for any school
+      await connection.query(`
+      INSERT INTO school_users (school_id, user_id)
+      VALUES (?, ?);
+    `, [req.body.school_id, user.insertId]);
+    } else {
+      await connection.query(`
       INSERT INTO school_users (school_id, user_id)
       VALUES (?, ?);
     `, [req.session.school.id, user.insertId]);
+    }
+
     return res.status(200).send("User created successfully.");
   } catch (error) {
     console.error(error);
@@ -136,6 +145,14 @@ router.post("/edit/:id", async (req, res) => {
     SET username = ?, password = ?, real_name = ?, date_of_birth = ?, email = ?, address = ?, phone_number = ?
     WHERE id = ?;
     `, [username, password, real_name, date_of_birth, email, address, phone_number, id]);
+    if (req.session.user.type === "admin") {
+      // Admins can assign managers to any school
+      await connection.query(`
+      UPDATE school_users
+      SET school_id = ?
+      WHERE user_id = ?;
+    `, [req.body.school_id, id]);
+    }
     return res.status(200).send("User updated successfully.");
   } catch (error) {
     console.error(error);

@@ -54,6 +54,19 @@
                     </div>
                     <div class="col-sm-3"><input type="text" v-model="phone_number"/></div>
                   </div>
+                  <% if(session.user.type === "admin") {%>
+                  <hr />
+                  <div class="row">
+                    <div class="col-sm-4">
+                      <h6>School</h6>
+                    </div>
+                    <div class="col-sm-3"><select v-model="school_id">
+                      <% schools.forEach(school => { %>
+                      <option value="<%= school.id %>"><%= school.name %></option>
+                      <% }) %>
+                    </select>
+                  </div>
+                  <% } %>
               <div class="row">
                 <div class="col-sm-12">
                   <hr /><button class="btn btn-primary" @click="editUser()">Submit</button>
