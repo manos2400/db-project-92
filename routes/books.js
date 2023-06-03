@@ -365,6 +365,9 @@ router.get("/reviews/:id", async (req, res) => {
           WHERE reviews.book_id = ?
           ORDER BY reviews.date DESC;
       `, [id]);
+      reviews.forEach(review => {
+        review.date = moment(review.date).tz('Europe/Athens').format('DD-MM-YYYY');;
+      })
       return res.status(200).render("reviews", {
         session: req.session,
         title: book[0].title,

@@ -25,7 +25,10 @@ router.get("/", async (req, res) => {
     } finally {
         await connection.release();
     }
-
+    reservations.forEach(reservation => {
+        reservation.date_due = moment(reservation.date_due).tz('Europe/Athens').format('DD-MM-YYYY');
+        reservation.date = moment(reservation.date).tz('Europe/Athens').format('DD-MM-YYYY');
+    });
     // Render the dashboard view and pass session information as locals
     return res.render('reservations', {
         session: req.session,

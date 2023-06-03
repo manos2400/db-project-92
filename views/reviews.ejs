@@ -44,7 +44,7 @@
         <% reviews.forEach(review=> { %>
         <tr>
           <td><%= review.user_name %></td>
-          <td><%= review.date.toISOString().split("T")[0] %></td>
+          <td><%= review.date %></td>
           <td>
             <%= review.rating %>
           </td>

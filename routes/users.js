@@ -1,6 +1,7 @@
 const express = require("express");
 const pool = require("../database.js");
 const router = express.Router();
+const moment = require("moment-timezone");
 
 router.get("/", async (req, res) => {
   try {
@@ -72,7 +73,7 @@ router.get("/:id", async (req, res) => {
       return res.status(404).send("User not found");
     }
     user = user[0];
-    user.date_of_birth = user.date_of_birth.toISOString().split("T")[0];
+    user.date_of_birth = moment(user.date_of_birth).tz('Europe/Athens').format('DD-MM-YYYY');
     return res.send(user);
   } catch (error) {
     console.error(error);

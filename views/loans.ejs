@@ -54,10 +54,10 @@
           <td><%= book.real_name %></td>
           <td><%= book.title %></td>
           <td>
-            <%= book.date_out.toISOString().split("T")[0] %>
+            <%= book.date_out %>
           </td>
           <td style="color:crimson">
-            <%= book.date_due.toISOString().split("T")[0] %>
+            <%= book.date_due %>
           </td>
           <td>-</td>
           <td>
@@ -89,10 +89,10 @@
           <td><%= book.real_name %></td>
           <td><%= book.title %></td>
           <td>
-            <%= book.date_out.toISOString().split("T")[0] %>
+            <%= book.date_out %>
           </td>
           <td>
-            <%= book.date_due.toISOString().split("T")[0] %>
+            <%= book.date_due %>
           </td>
           <td>-</td>
           <td>
@@ -123,13 +123,13 @@
           <td><%= book.real_name %></td>
           <td><%= book.title %></td>
           <td>
-            <%= book.date_out.toISOString().split("T")[0] %>
+            <%= book.date_out %>
           </td>
           <td>
-            <%= book.date_due.toISOString().split("T")[0] %>
+            <%= book.date_due %>
           </td>
           <td>
-            <%= book.date_in.toISOString().split("T")[0]%>
+            <%= book.date_in%>
           </td>
           </tr>
         <% }); %>

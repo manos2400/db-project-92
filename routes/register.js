@@ -1,6 +1,6 @@
 const express = require('express')
 const { pool } = require('../database.js');
-
+const moment = require('moment-timezone');
 
 const router = express.Router()
 
@@ -30,6 +30,7 @@ router.post("/", async (req, res) => {
     // Connect to MariaDB
     const connection = await pool.getConnection();
     const { username, password, real_name, date_of_birth, email, address, phone, type, school_id } = req.body;
+    date_of_birth = moment(date_of_birth).format();
     try {
         const p_users = await connection.query(`
             SELECT username FROM pending_users WHERE username = ?;
