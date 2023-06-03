@@ -48,8 +48,6 @@ router.get("/", async (req, res) => {
         [req.session.school.id]
       );
     }
-
-
     if (!books) {
       throw new Error("No books found");
     }
@@ -372,6 +370,37 @@ router.get("/reviews/:id", async (req, res) => {
         title: book[0].title,
         reviews
       });
+  } catch (error) {
+    console.error(error);
+    return res.status(503).send("Database is currently unavailable.");
+  }
+});
+
+router.post("/review/edit/:id", async (req, res) => {
+  if (!req.session.loggedIn) {
+    return res.redirect("/");
+  }
+  const { id } = req.params;
+  const { rating, review } = req.body;
+  const connection = await pool.getConnection();
+  try {
+    await connection.query(`UPDATE reviews SET date= CURRENT_DATE() ,rating = ? , review = ? WHERE user_id = ? AND book_id = ?;`, [rating, review, req.session.user.id, id]);
+    return res.status(200).send("Review updated.");
+  } catch (error) {
+    console.error(error);
+    return res.status(503).send("Database is currently unavailable.");
+  }
+});
+
+router.delete("/review/delete/:id", async (req, res) => {
+  if (!req.session.loggedIn) {
+    return res.redirect("/");
+  }
+  const { id } = req.params;
+  const connection = await pool.getConnection();
+  try {
+    await connection.query(`DELETE FROM reviews WHERE user_id = ? AND book_id = ?;`, [req.session.user.id, id]);
+    return res.status(200).send("Review deleted.");
   } catch (error) {
     console.error(error);
     return res.status(503).send("Database is currently unavailable.");

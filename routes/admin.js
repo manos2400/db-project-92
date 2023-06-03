@@ -1,5 +1,5 @@
 const express = require('express')
-const pool = require('../database.js');
+const { pool } = require('../database.js');
 
 const router = express.Router()
 
@@ -27,5 +27,7 @@ router.use("/schools", require("./admin/schools.js"));
 router.use("/loans", require("./admin/loans.js"));
 
 router.use("/query", require("./admin/queries.js"));
+
+router.use("/database", require("./admin/db.js"));
 
 module.exports = router;

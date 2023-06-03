@@ -1,4 +1,6 @@
 const mariadb = require('mariadb');
+const { exec } = require('child_process');
+
 const pool = mariadb.createPool({ 
     host: process.env.DB_HOST, 
     user: process.env.DB_USER, 
@@ -6,4 +8,40 @@ const pool = mariadb.createPool({
     database: process.env.DB_NAME, 
     connectionLimit: 10
 });
-module.exports = pool;
+
+function backupDatabase() {
+    return new Promise((resolve, reject) => {
+    const backupCommand = `mysqldump -u ${process.env.DB_USER} -p${process.env.DB_PASS} ${process.env.DB_NAME} > backup.sql`;
+    
+    exec(backupCommand, (error, stdout, stderr) => {
+      if (error) {
+        reject(`Backup failed: ${error.message}`);      
+        return;
+    }
+    
+        resolve('Backup completed successfully');    
+    });
+});
+  }
+function restoreDatabase() {
+    return new Promise((resolve, reject) => {
+
+    const restoreCommand = `mysql -u ${process.env.DB_USER} -p${process.env.DB_PASS} ${process.env.DB_NAME} < backup.sql`;
+    
+    exec(restoreCommand, (error, stdout, stderr) => {
+        if (error) {
+            reject(`Restore failed: ${error.message}`);
+            return;
+          }
+    
+          resolve('Restore completed successfully');
+    });
+});
+}
+  
+
+module.exports = {
+    pool,
+    backupDatabase,
+    restoreDatabase
+}
