@@ -102,7 +102,7 @@
       methods: {
         getBookData(id) {
           // Handle form submission logic here
-          axios.get(`http://localhost:3000/books/${id}`)
+          axios.get(`/books/${id}`)
             .then(response => {
               // Handle success
               this.book = response.data;
@@ -156,7 +156,7 @@
         },
         reserveBook(id) {
           // Handle form submission logic here
-          axios.post(`http://localhost:3000/books/reserve/${id}`)
+          axios.post(`/books/reserve/${id}`)
             .then(response => {
               // Handle success
               this.message = response.data;
@@ -189,7 +189,7 @@
           params.append('categories', this.category);
           params.append('picture', this.picture);
           params.append('quantity', this.quantity);
-          axios.post(`http://localhost:3000/books/add`, params)
+          axios.post(`/books/add`, params)
             .then(response => {
               // Handle success
               this.message = response.data;
@@ -202,7 +202,7 @@
           const params = new FormData();
           params.append('file', event.target.files[0]);
           let fileName = event.target.files[0].name;
-          axios.post(`http://localhost:3000/books/add/picture`, params)
+          axios.post(`/books/add/picture`, params)
             .then(response => {
               // Handle success
               this.picture = fileName;
@@ -247,7 +247,7 @@
           params.append('categories', this.category);
           params.append('picture', this.picture);
           params.append('quantity', this.quantity);
-          axios.post(`http://localhost:3000/books/edit/${id}`, params)
+          axios.post(`/books/edit/${id}`, params)
             .then(response => {
               // Handle success
               this.message = response.data;
@@ -260,7 +260,7 @@
           const params = new URLSearchParams();
           params.append('rating', this.rating);
           params.append('review', this.review);
-          axios.post(`http://localhost:3000/books/review/${id}`, params)
+          axios.post(`/books/review/${id}`, params)
             .then(response => {
               // Handle success
               this.message = response.data;

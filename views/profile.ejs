@@ -197,7 +197,7 @@
             const params = new URLSearchParams();
             params.append('newpass', this.formData.newpass);
             params.append('confirmpass', this.formData.confirmpass);
-            axios.put('http://localhost:3000/password', params)
+            axios.put('/password', params)
             .then(() => {
               // Handle success
               this.message = 'Password changed successfully.';
@@ -223,7 +223,7 @@
           this.id = userID;
           this.message = '';
           // Get the user data from the server
-          axios.get('http://localhost:3000/users/' + userID)
+          axios.get('/users/' + userID)
             .then(response => {
               // Handle success
               this.username = response.data.username;
@@ -250,7 +250,7 @@
           params.append('email', this.email);
           params.append('address', this.address);
           params.append('phone_number', this.phone_number);
-          axios.post('http://localhost:3000/users/edit/' + this.id, params)
+          axios.post('/users/edit/' + this.id, params)
             .then(response => {
               this.message = response.data;
             })

@@ -152,7 +152,7 @@
                     params.append('date_of_birth', this.date_of_birth);
                     params.append('type', this.type);
                     params.append('school_id', this.school_id);
-                    axios.post('http://localhost:3000/register', params)
+                    axios.post('/register', params)
                         .then(response => {
                             this.message = response.data;
                         })

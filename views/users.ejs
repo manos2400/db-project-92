@@ -146,7 +146,7 @@
         },
         getUserData(id, pending = false) {
           if (pending) {
-            axios.get('http://localhost:3000/users/' + id + '?status=pending')
+            axios.get('/users/' + id + '?status=pending')
             .then(response => {
               this.user = response.data;
               this.user.status = 'pending';
@@ -156,7 +156,7 @@
               console.log('Error:', error);
             });
           } else {
-          axios.get('http://localhost:3000/users/' + id)
+          axios.get('/users/' + id)
             .then(response => {
               this.user = response.data;
               this.user.status = 'active';
@@ -219,7 +219,7 @@
           if(school_id && this.type === 'manager') {
             params.append('school_id', this.school_id);
           }
-          axios.post('http://localhost:3000/users/edit/' + this.user.id, params)
+          axios.post('/users/edit/' + this.user.id, params)
             .then(response => {
               this.message = response.data;
             })
@@ -241,7 +241,7 @@
           if(school_id && this.type === 'manager') {
             params.append('school_id', this.school_id);
           }
-          axios.post('http://localhost:3000/users/create', params)
+          axios.post('/users/create', params)
             .then(response => {
               this.message = response.data;
             })

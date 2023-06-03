@@ -85,7 +85,7 @@
       },
       methods: {
         getSchoolData(id) {
-          axios.get('http://localhost:3000/admin/schools/' + id)
+          axios.get('/admin/schools/' + id)
           .then(response => {
             this.school = response.data;
             this.infoPanel = "dialog-container";
@@ -134,7 +134,7 @@
           params.append('phone_number', this.phone_number);
           params.append('email', this.email);
           params.append('principal_name', this.principal_name);
-          axios.post('http://localhost:3000/admin/schools/edit/' + this.school.id, params)
+          axios.post('/admin/schools/edit/' + this.school.id, params)
             .then(response => {
               this.message = response.data;
             })
@@ -151,7 +151,7 @@
           params.append('phone_number', this.phone_number);
           params.append('email', this.email);
           params.append('principal_name', this.principal_name);
-          axios.post('http://localhost:3000/admin/schools/create', params)
+          axios.post('/admin/schools/create', params)
             .then(response => {
               this.message = response.data;
             })

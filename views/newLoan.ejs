@@ -58,7 +58,7 @@
       },
       methods: {
         createLoan() {
-            axios.post(`http://localhost:3000/loans/manage/add/${this.book_id}/${this.user_id}`)
+            axios.post(`/loans/manage/add/${this.book_id}/${this.user_id}`)
             .then(response => {
                 this.message = response.data;
             }).catch(err => {
