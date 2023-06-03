@@ -127,6 +127,20 @@ manageRouter.get("/create", async (req, res) => {
     const connection = await pool.getConnection();
     let books, users;
     try {
+        // Check if the user has reached the maximum number of loans
+        const loansCount = await connection.query(`SELECT COUNT(*) FROM loans WHERE school_id = ? AND user_id = ? AND WEEK(date_out) = WEEK(CURRENT_DATE());`, [req.session.school.id, req.session.user.id]);
+        switch (req.session.user.type) {
+            case 'student':
+                if (loansCount >= 2) {
+                    return res.status(403).send('The user has reached the maximum number of loans this week.');
+                }
+                break;
+            case 'teacher':
+                if (loansCount >= 1) {
+                    return res.status(403).send('The user has reached the maximum number of loans this week.');
+                }
+                break;            
+        }
         books = await connection.query(`SELECT title, id FROM school_books_view WHERE school_id = ? AND available > 0;`, [req.session.school.id]);
         users = await connection.query(`
         SELECT u.real_name AS name, u.id AS id
