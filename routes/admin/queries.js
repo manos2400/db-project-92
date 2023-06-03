@@ -8,7 +8,7 @@ router.get("/category/authors", async (req, res) => {
     try {
         const connection = await pool.getConnection();
         const authors = await connection.query(`
-        SELECT authors.name AS name
+        SELECT DISTINCT authors.name AS name
         FROM books
         INNER JOIN book_authors ON books.id = book_authors.book_id
         INNER JOIN authors ON book_authors.author_id = authors.id
