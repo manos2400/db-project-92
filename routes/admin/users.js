@@ -15,7 +15,7 @@ router.get("/", async (req, res) => {
       let users, admins;
       if(req.query.name) {
           users = await connection.query(`
-          SELECT u.real_name AS name, u.id AS id, u.type AS type, s.name AS school_name
+          SELECT u.real_name AS name, u.id AS id, u.type AS type, s.name AS school_name, s.id AS school_id
           FROM school_users su
           INNER JOIN users u ON su.user_id = u.id
           INNER JOIN schools s ON su.school_id = s.id
@@ -28,7 +28,7 @@ router.get("/", async (req, res) => {
           WHERE type = 'admin' AND real_name LIKE ?;`, [`%${req.query.name}%`]);
       } else {
           users = await connection.query(`
-          SELECT u.real_name AS name, u.id AS id, u.type AS type, s.name AS school_name
+          SELECT u.real_name AS name, u.id AS id, u.type AS type, s.name AS school_name, s.id AS school_id
           FROM school_users su
           INNER JOIN users u ON su.user_id = u.id
           INNER JOIN schools s ON su.school_id = s.id

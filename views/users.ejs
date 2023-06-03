@@ -144,7 +144,7 @@
           const name = this.searchTerm.replace(' ', '%20');
           window.location.href = '/users?name=' + name;
         },
-        getUserData(id, pending = false) {
+        getUserData(id, pending = false, admin = false) {
           if (pending) {
             axios.get('/users/' + id + '?status=pending')
             .then(response => {
@@ -174,6 +174,8 @@
           this.date_of_birth = this.user.date_of_birth;
           this.email = this.user.email;
           this.address = this.user.address;
+          this.school_id = this.user.school_id;
+          this.type = this.user.type;
           this.phone_number = this.user.phone_number;
           this.infoPanel = "dialog-container hidden";
           this.editPanel = "dialog-container";
@@ -207,7 +209,7 @@
             this.type = '';
           }
         },
-        editUser() {
+        editUser(admin = false) {
           const params = new URLSearchParams();
           params.append('username', this.username);
           params.append('password', this.password);
@@ -216,7 +218,7 @@
           params.append('email', this.email);
           params.append('address', this.address);
           params.append('phone_number', this.phone_number);
-          if(school_id && this.type === 'manager') {
+          if(admin) {
             params.append('school_id', this.school_id);
           }
           axios.post('/users/edit/' + this.user.id, params)
@@ -228,7 +230,7 @@
               this.message = error.response.data;
             });
         },
-        createUser() {
+        createUser(admin = false) {
           const params = new URLSearchParams();
           params.append('username', this.username);
           params.append('password', this.password);
@@ -238,7 +240,7 @@
           params.append('address', this.address);
           params.append('phone_number', this.phone_number);
           params.append('type', this.type);
-          if(school_id && this.type === 'manager') {
+          if(admin && this.type === 'manager') {
             params.append('school_id', this.school_id);
           }
           axios.post('/users/create', params)

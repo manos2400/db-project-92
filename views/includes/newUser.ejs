@@ -78,7 +78,11 @@
         </div>
         <div class="row">
           <div class="col-sm-12">
-            <button class="btn btn-primary" @click="createUser()">Submit</button>
+            <% if(session.user.type === "admin") {%>
+              <hr /><button class="btn btn-primary" @click="createUser(true)">Submit</button>
+              <% } else { %>
+                <button class="btn btn-primary" @click="createUser()">Submit</button>
+                <% } %>
           </div>
         </div>
       </div>

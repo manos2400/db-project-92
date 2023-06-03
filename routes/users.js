@@ -60,7 +60,11 @@ router.get("/:id", async (req, res) => {
         [req.params.id]);
     } else {
         user = await connection.query(
-            `SELECT * FROM users WHERE id = ?;`,
+            `SELECT users.*, schools.id AS school_id 
+            FROM users 
+            LEFT JOIN school_users ON users.id = school_users.user_id
+            LEFT JOIN schools ON school_users.school_id = schools.id
+            WHERE users.id = ?;`,
         [req.params.id]);
     }
     await connection.release();
@@ -79,8 +83,8 @@ router.post("/create", async (req, res) => {
   if (!req.session.loggedIn) {
     return res.redirect("/");
   }
-  if (req.session.user.type !== "manager" || req.session.user.type !== "admin") {
-    return res.status(403).send("You are not allowed to edit users.");
+  if (req.session.user.type !== "manager" && req.session.user.type !== "admin") {
+    return res.status(403).send("You are not allowed to create users.");
   }
   const { username, password, real_name, date_of_birth, email, address, phone_number, type } = req.body;
   try {
@@ -164,7 +168,7 @@ router.post("/delete/:id", async (req, res) => {
   if (!req.session.loggedIn) {
     return res.redirect("/");
   }
-  if (req.session.user.type !== "manager" || req.session.user.type !== "admin") {
+  if (req.session.user.type !== "manager" && req.session.user.type !== "admin") {
     return res.status(403).send("You are not allowed to delete users.");
   }
   try {
@@ -183,7 +187,7 @@ router.post("/deactivate/:id", async (req, res) => {
   if (!req.session.loggedIn) {
     return res.redirect("/");
   }
-  if (req.session.user.type !== "manager" || req.session.user.type !== "admin") {
+  if (req.session.user.type !== "manager" && req.session.user.type !== "admin") {
     return res.status(403).send("You are not allowed to deactivate users.");
   }
   try {
@@ -213,7 +217,7 @@ router.post("/pending/accept/:id", async (req, res) => {
   if (!req.session.loggedIn) {
     return res.redirect("/");
   }
-  if (req.session.user.type !== "manager" || req.session.user.type !== "admin") {
+  if (req.session.user.type !== "manager" && req.session.user.type !== "admin") {
     return res.status(403).send("You are not allowed to accept user applications.");
   }
   try {
@@ -245,7 +249,7 @@ router.post("/pending/deny/:id", async (req, res) => {
   if (!req.session.loggedIn) {
     return res.redirect("/");
   }
-  if (req.session.user.type !== "manager" || req.session.user.type !== "admin") {
+  if (req.session.user.type !== "manager" && req.session.user.type !== "admin") {
     return res.status(403).send("You are not allowed to deny user applications.");
   }
   try {

@@ -54,6 +54,7 @@
                     </div>
                     <div class="col-sm-3"><input type="text" v-model="phone_number"/></div>
                   </div>
+                  <div v-if="type !== 'admin'">
                   <% if(session.user.type === "admin") {%>
                   <hr />
                   <div class="row">
@@ -66,10 +67,17 @@
                       <% }) %>
                     </select>
                   </div>
+                  </div>
                   <% } %>
+                </div>
               <div class="row">
                 <div class="col-sm-12">
-                  <hr /><button class="btn btn-primary" @click="editUser()">Submit</button>
+                  <% if(session.user.type === "admin") {%>
+                    <hr /><button class="btn btn-primary" @click="editUser(true)">Submit</button>
+                    <% } else { %>
+                      <hr /><button class="btn btn-primary" @click="editUser()">Submit</button>
+                      <% } %>
+                  
                 </div>
               </div>
           </div>
