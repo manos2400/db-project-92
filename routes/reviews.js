@@ -4,6 +4,39 @@ const moment = require('moment-timezone');
 
 const router = express.Router()
 
+router.get("/average", async (req, res) => {
+    if (!req.session.loggedIn) {
+      return res.redirect("/");
+    }
+    try {
+        const connection = await pool.getConnection();
+        let review;
+        if(req.query.user) {
+            review = await connection.query(`
+            SELECT ROUND(AVG(reviews.rating), 1) AS average_rating
+            FROM users
+            JOIN reviews ON users.id = reviews.user_id
+            WHERE users.id = ?
+            `, [req.query.user]);
+
+        } else if(req.query.category){
+            review = await connection.query(`
+            SELECT ROUND(AVG(r.rating), 1) AS average_rating
+            FROM books b
+            JOIN book_categories bc ON b.id = bc.book_id
+            JOIN categories c on bc.category_id = c.id
+            JOIN reviews r ON b.id = r.book_id
+            WHERE c.name = ?
+            `, [req.query.category]);
+        }
+        await connection.release();
+        return res.status(200).send(review[0]);
+    } catch (error) {
+      console.error(error);
+      return res.status(503).send("Database is currently unavailable.");
+    }
+  });
+
 router.get("/:id", async (req, res) => {
     if (!req.session.loggedIn) {
       return res.redirect("/");
@@ -32,38 +65,7 @@ router.get("/:id", async (req, res) => {
       return res.status(503).send("Database is currently unavailable.");
     }
   });
-  router.get("/average", async (req, res) => {
-    if (!req.session.loggedIn) {
-      return res.redirect("/");
-    }
-    try {
-        const connection = await pool.getConnection();
-        let review;
-        if(req.query.user) {
-            review = await connection.query(`
-            SELECT ROUND(AVG(reviews.rating), 1) AS average_rating
-            FROM users
-            JOIN reviews ON users.id = reviews.user_id
-            WHERE users.name = ?
-            `, [req.query.user]);
 
-        } else if(req.query.category){
-            review = await connection.query(`
-            SELECT ROUND(AVG(r.rating), 1) AS average_rating
-            FROM books b
-            JOIN book_categories bc ON b.id = bc.book_id
-            JOIN categories c on bc.category_id = c.id
-            JOIN reviews r ON b.id = r.book_id
-            WHERE c.id = ?
-            `, [req.query.category]);
-        }
-        await connection.release();
-        return res.status(200).send(review[0]);
-    } catch (error) {
-      console.error(error);
-      return res.status(503).send("Database is currently unavailable.");
-    }
-  });
 
 
 module.exports = router;

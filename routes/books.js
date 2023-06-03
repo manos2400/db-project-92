@@ -1,7 +1,6 @@
 const express = require("express");
 const { pool } = require("../database.js");
 
-const moment = require("moment-timezone");
 const multer = require("multer");
 const router = express.Router();
 const fs = require("fs");
@@ -352,7 +351,7 @@ router.post("/review/:id", async (req, res) => {
     return res.status(503).send("Database is currently unavailable.");
   }
 });
-router.use("/review", require("./reviews.js"));
+router.use("/reviews", require("./reviews.js"));
 
 router.post("/review/edit/:id", async (req, res) => {
   if (!req.session.loggedIn) {
