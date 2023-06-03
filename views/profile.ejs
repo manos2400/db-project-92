@@ -20,6 +20,7 @@
   <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
   <script src="https://unpkg.com/vue@next"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <body>
   <%- include("includes/navbar.ejs") %>
   <div class="container" id="app">
@@ -44,6 +45,7 @@
         <div class="col-md-8">
           <div class="card mb-3">
             <div class="card-body">
+              <div id="card">
               <div class="row">
                 <div class="col-sm-3">
                   <h6 class="mb-0">Full Name</h6>
@@ -79,11 +81,13 @@
                 <div class="col-sm-9 text-secondary"><span> <%=user.type%> </span></div>
               </div>
               <hr>
+            </div>
               <div id="app" class="row">
                 <% if(user.type === 'teacher' || user.type === 'manager') {%>
                 <div class="mb-3"><button class="btn btn-primary d-block w-100" type="button" @click="openEditDialog(<%= user.id %>)">Edit Info</button></div>
                 <% } %>
                 <div class="mb-3"><button v-if="!showForm" @click="showForm = true" class="btn btn-secondary d-block w-100">Change Password</button></div>
+                <div class="mb-3"><button v-if="!showForm" @click="getUserCard" class="btn btn-secondary d-block w-100">Get Member Card</button></div>
                   <form v-if="showForm" @submit.prevent="submitForm" class="text-center">
                     <div class="mb-3"><input class="form-control" type="password" v-model="formData.newpass" placeholder="New Password"></div>
                     <div class="mb-3"><input class="form-control" type="password" v-model="formData.confirmpass" placeholder="Retype Password"></div>
@@ -258,6 +262,19 @@
               console.log('Error:', error);
               this.message = error.response.data;
             });
+        },
+        getUserCard() {
+          html2canvas(document.getElementById("card")).then(canvas => {
+          // Convert canvas to image
+          const image = canvas.toDataURL("image/png");
+          var link = document.createElement("a");
+          link.href = image;
+          link.download = "member_card.png";
+
+          // Trigger the download
+          link.click();
+          });
+
         }
       }
     });
