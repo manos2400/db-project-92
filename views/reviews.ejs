@@ -17,6 +17,8 @@
   <link rel="stylesheet" href="/css/dropdown.css">
   <link rel="stylesheet" href="/css/input.css">
   <link rel="stylesheet" href="/css/buttons.css">
+  <link rel="stylesheet" href="/css/dialog.css">
+  <link rel="stylesheet" href="/css/review.css">
   <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
   <script src="https://unpkg.com/vue@next"></script>
@@ -27,7 +29,7 @@
 
 <body>
   <%- include("includes/navbar.ejs") %>
-  <div class="container py-4 py-xl-5">
+  <div class="container py-4 py-xl-5" id="app">
     <h4>Reviews for Book: <%= title %></h4>
     <table id="reviews" class="table table-striped ">
       <thead>
@@ -48,14 +50,74 @@
           </td>
             <td>
                 <%= review.review %>
+                <%if(session.user.id === review.user_id) {%>
+                    <button class="btn btn-primary btn-sm" type="button" @click="openReviewPanel(<%= review.book_id %>)">Edit</button>
+                    <button class="btn btn-danger btn-sm" type="button" @click="deleteReview(<%= review.book_id %>)" style="margin-left: 10px;">Delete</button>
+                    <span class="text-secondary">{{ message }}</span>
+                  <% } %>
           </td>
           </tr>
         <% }); %>
       </tbody>
     </table>
+    <%- include('includes/reviewBook') %>
       </div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          reviewBookPanel: "dialog-container hidden",
+          book: null,
+          message: null,
+          rating: null,
+          review: null,
+        }
+      },
+      methods: {
+        openReviewPanel(id) {
+          axios.get('/books/' + id)
+            .then(response => {
+              this.book = response.data;
+              this.reviewBookPanel = "dialog-container";
+            })
+            .catch(error => {
+              console.log(error);
+            });
+        },
+        closeDialog(type) {
+            this.reviewBookPanel = "dialog-container hidden";
+            this.book = null;
+            this.message = null;
+            this.rating = null;
+            this.review = null;
+        },
+        reviewBook(id) {
+          const params = new URLSearchParams();
+          params.append('rating', this.rating);
+          params.append('review', this.review);
+          axios.post(`/books/review/edit/${id}`, params)
+            .then(response => {
+              // Handle success
+              this.message = response.data;
+            })
+            .catch(error => {
+              this.message = error.response.data;
+            });
+        },
+        deleteReview(id) {
+          axios.delete(`/books/review/delete/${id}`)
+            .then(response => {
+              // Handle success
+              window.location.reload();
+            })
+            .catch(error => {
+              this.message = error.response.data;
+            });
+        }
+      }
+    });
+    app.mount('#app')
     $(document).ready(function() {
       $('#reviews').DataTable({
         paging: false,
