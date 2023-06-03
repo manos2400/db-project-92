@@ -58,6 +58,7 @@ router.get("/", async (req, res) => {
     });
   } catch (error) {
     console.error(error);
+    await connection.release();
     return res.status(503).send("Database is currently unavailable.");
   }
 });
@@ -96,16 +97,19 @@ router.post("/reserve/:book_id", async (req, res) => {
         // Check if the user has already loaned the book
         const loan = await connection.query(`SELECT * FROM loans WHERE school_id = ? AND book_id = ? AND user_id = ? AND date_in IS NULL;`, [req.session.school.id, book_id, req.session.user.id]);
         if (loan.length > 0) {
+            await connection.release();
             return res.status(403).send('You have already borrowed this book.');
         }
         // Check if the user has already reserved the book
         const reservation = await connection.query(`SELECT * FROM reservations WHERE school_id = ? AND book_id = ? AND user_id = ?;`, [req.session.school.id, book_id, req.session.user.id]);
         if (reservation.length > 0) {
+            await connection.release();
             return res.status(403).send('You have already reserved this book.');
         }
         // Check if the user has delayed books
         const loans = await connection.query(`SELECT * FROM loans WHERE school_id = ? AND book_id = ? AND user_id = ? AND date_due < CURRENT_DATE();`, [req.session.school.id, book_id, req.session.user.id]);
         if (loans.length > 0) {
+            await connection.release();
             return res.status(403).send('You have not returned a book in time.');
         }
         // Check if the user has reached the maximum number of reservations
@@ -229,19 +233,21 @@ router.post("/edit/:id", async (req, res) => {
   }
   const { id, title, publisher, isbn, pages, description, language, keywords, authors, categories, quantity } = req.body;
   let { picture } = req.body;
-  const connection = await pool.getConnection();
   if (quantity < 0) {
     return res.status(400).send("Quantity cannot be negative.");
   }
   try {
+    const connection = await pool.getConnection();
     // Check if the quantity doesnt match with currently lent books
     const rows = await connection.query(`SELECT * FROM school_books WHERE school_id = ? AND book_id = ? AND quantity - available > ?`, [req.session.school.id, id, quantity]);
     if (rows.length > 0) {
+      await connection.release();
       return res.status(400).send("Quantity cannot be less than the number of currently lent books.");
     }
     // Check if the quantity is zero and delete the book from this school
     if (quantity == 0) {
       await connection.query(`DELETE FROM school_books WHERE school_id = ? AND book_id = ?;`, [req.session.school.id, id]);
+      await connection.release();
       return res.status(200).send("Book removed from this library.");
     }
     if(!picture.startsWith("http://localhost:3000/static/images/")) {
