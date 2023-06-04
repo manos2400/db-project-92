@@ -2,9 +2,11 @@
 CREATE TRIGGER `new_loan` AFTER INSERT ON `loans` 
 FOR EACH ROW 
 BEGIN 
+IF NEW.date_in IS NULL THEN
 UPDATE school_books 
 SET available = available - 1 
-WHERE book_id = NEW.book_id and school_id = NEW.school_id; 
+WHERE book_id = NEW.book_id AND school_id = NEW.school_id;
+END IF;
 END 
 
 CREATE TRIGGER `wait_reservations` AFTER UPDATE ON `school_books` 
@@ -47,8 +49,11 @@ DELETE FROM reviews WHERE user_id = old.id;
 END
 
 CREATE TRIGGER `returned_loan` AFTER UPDATE ON `loans` 
-FOR EACH ROW BEGIN 
+FOR EACH ROW 
+BEGIN
+IF NEW.date_in IS NOT NULL THEN 
 UPDATE school_books 
 SET available = available + 1 
-WHERE book_id = NEW.book_id AND school_id = NEW.school_id; 
+WHERE book_id = NEW.book_id AND school_id = NEW.school_id;
+END IF;
 END 
