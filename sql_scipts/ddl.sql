@@ -103,7 +103,8 @@ CREATE TABLE loans (
   date_due DATE NOT NULL,
   date_in DATE,
   CONSTRAINT lo_users FOREIGN KEY (user_id) REFERENCES users(id),
-  CONSTRAINT lo_books FOREIGN KEY (book_id) REFERENCES books(id)
+  CONSTRAINT lo_books FOREIGN KEY (book_id) REFERENCES books(id),
+  CONSTRAINT lo_schools FOREIGN KEY (school_id) REFERENCES schools(id)
 );
 
 CREATE TABLE reservations (
@@ -115,7 +116,8 @@ CREATE TABLE reservations (
   date_due DATE NOT NULL,
   PRIMARY KEY (user_id, book_id, school_id),
   CONSTRAINT res_users FOREIGN KEY (user_id) REFERENCES users(id),
-  CONSTRAINT res_books FOREIGN KEY (book_id) REFERENCES books(id)
+  CONSTRAINT res_books FOREIGN KEY (book_id) REFERENCES books(id),
+  CONSTRAINT res_schools FOREIGN KEY (school_id) REFERENCES schools(id)
 );
 
 CREATE TABLE reviews (
