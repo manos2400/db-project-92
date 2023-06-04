@@ -45,3 +45,10 @@ DELETE FROM school_users WHERE user_id = old.id;
 DELETE FROM loans WHERE user_id = old.id; 
 DELETE FROM reviews WHERE user_id = old.id; 
 END
+
+CREATE TRIGGER `returned_loan` AFTER UPDATE ON `loans` 
+FOR EACH ROW BEGIN 
+UPDATE school_books 
+SET available = available + 1 
+WHERE book_id = NEW.book_id AND school_id = NEW.school_id; 
+END 
