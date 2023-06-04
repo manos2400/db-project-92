@@ -131,6 +131,11 @@ CREATE TABLE reviews (
   CONSTRAINT rev_books FOREIGN KEY (book_id) REFERENCES books(id)
 );
 
+-- Indexes
+CREATE INDEX rev_users ON reviews (user_id);
+CREATE INDEX sb_books ON school_books (book_id);
+CREATE INDEX users_name ON users (id, real_name);
+
 -- Views
 CREATE VIEW reservations_view AS
 SELECT u.real_name, books.title, r.date, r.waited, r.date_due, r.user_id, r.book_id, r.school_id
