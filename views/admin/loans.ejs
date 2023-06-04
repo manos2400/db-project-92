@@ -106,7 +106,7 @@
           <td>
             <%= book.date_due %>
           </td>
-          <td>-</td>
+          <td><%= book.date_in ? book.date_in : "-"%></td>
           </tr>
         <% }); %>
       </tbody>
