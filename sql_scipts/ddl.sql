@@ -260,3 +260,8 @@ WHERE book_id = NEW.book_id AND school_id = NEW.school_id;
 END IF;
 END //
 DELIMITER ;
+
+CREATE EVENT past_due_reservations
+ON SCHEDULE EVERY 1 DAY
+DO
+  DELETE FROM reservations WHERE date_due < CURRENT_DATE() AND waited != 1;
