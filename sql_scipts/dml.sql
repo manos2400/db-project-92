@@ -41,7 +41,7 @@ VALUES
 ("student30", "password35", "Mason Martinez", "2006-12-05", "student30@school.edu", "2727 Maple St", "555-2727", "student");
 
 -- Insert Teachers
-INSERT INTO users (username, password, real_name, date_of_birth, email, address, phone_number, type, total_books)
+INSERT INTO users (username, password, real_name, date_of_birth, email, address, phone_number, type)
 VALUES
 ("teacher1", "password36", "Maria Garcia", "1985-09-03", "teacher1@school.edu", "1010 Oak St", "555-1010", "teacher"),
 ("teacher2", "password37", "David Brown", "1983-05-07", "teacher2@school.edu", "1111 Maple St", "555-1111", "teacher"),
