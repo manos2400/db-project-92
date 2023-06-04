@@ -53,7 +53,7 @@ router.get("/:id", async (req, res) => {
             ORDER BY reviews.date DESC;
         `, [id]);
         reviews.forEach(review => {
-          review.date = moment(review.date).tz('Europe/Athens').format('DD-MM-YYYY');;
+          review.date = moment(review.date).tz('Europe/Athens').format('YYYY-MM-DD');;
         })
         return res.status(200).render("reviews", {
           session: req.session,

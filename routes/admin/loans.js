@@ -25,9 +25,9 @@ router.get("/", async (req, res) => {
         `);
         await connection.release();
         loans.forEach(loan => {
-            loan.date_due = moment(loan.date_due).tz('Europe/Athens').format('DD-MM-YYYY');
-            loan.date_out = moment(loan.date_out).tz('Europe/Athens').format('DD-MM-YYYY');
-            loan.date_in = loan.date_in ? moment(loan.date_in).tz('Europe/Athens').format('DD-MM-YYYY') : null;
+            loan.date_due = moment(loan.date_due).tz('Europe/Athens').format('YYYY-MM-DD');
+            loan.date_out = moment(loan.date_out).tz('Europe/Athens').format('YYYY-MM-DD');
+            loan.date_in = loan.date_in ? moment(loan.date_in).tz('Europe/Athens').format('YYYY-MM-DD') : null;
         });
         // Render the dashboard view and pass session information as locals
         return res.render('admin/loans', {

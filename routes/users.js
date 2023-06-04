@@ -74,7 +74,7 @@ router.get("/:id", async (req, res) => {
       return res.status(404).send("User not found");
     }
     user = user[0];
-    user.date_of_birth = moment(user.date_of_birth).tz('Europe/Athens').format('DD-MM-YYYY');
+    user.date_of_birth = moment(user.date_of_birth).tz('Europe/Athens').format('YYYY-MM-DD');
     return res.send(user);
   } catch (error) {
     console.error(error);
