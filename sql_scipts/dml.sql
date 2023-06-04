@@ -884,7 +884,7 @@ INSERT INTO loans (user_id, book_id, school_id, date_out, date_due, date_in) VAL
 (23, 66, 2, "2023-06-04", DATE_ADD("2023-06-04", INTERVAL 7 DAY), NULL),
 (31, 21, 3, "2023-06-03", DATE_ADD("2023-06-03", INTERVAL 7 DAY), NULL),
 
-
+-- Insert new reservations
 INSERT INTO reservations (user_id, book_id, school_id, date, date_due) VALUES
 (49, 77, 1, "2023-06-04", DATE_ADD("2023-06-04", INTERVAL 7 DAY)),
 (26, 44, 3, "2023-06-02", DATE_ADD("2023-06-02", INTERVAL 7 DAY)),
