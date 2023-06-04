@@ -96,13 +96,13 @@ CREATE TABLE school_users (
 );
 
 CREATE TABLE loans (
+  id INT PRIMARY KEY AUTO_INCREMENT,
   user_id INT NOT NULL,
   book_id INT NOT NULL,
   school_id INT NOT NULL,
   date_out DATE NOT NULL,
   date_due DATE NOT NULL,
   date_in DATE,
-  PRIMARY KEY (user_id, book_id, school_id),
   CONSTRAINT lo_users FOREIGN KEY (user_id) REFERENCES users(id),
   CONSTRAINT lo_books FOREIGN KEY (book_id) REFERENCES books(id)
 );
