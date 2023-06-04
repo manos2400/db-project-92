@@ -11,7 +11,7 @@ CREATE TABLE users (
   email VARCHAR(90) NOT NULL,
   address VARCHAR(90) NOT NULL,
   phone_number VARCHAR(20) NOT NULL,
-  type ENUM ('admin', 'manager', 'student', 'teacher') NOT NULL,
+  type ENUM ('admin', 'manager', 'student', 'teacher') NOT NULL
 );
 
 CREATE TABLE schools (
@@ -21,7 +21,7 @@ CREATE TABLE schools (
   city VARCHAR(90) NOT NULL,
   phone_number VARCHAR(20) NOT NULL,
   email VARCHAR(90) NOT NULL,
-  principal_name VARCHAR(90) NOT NULL,
+  principal_name VARCHAR(90) NOT NULL
 );
 
 CREATE TABLE pending_users (
@@ -47,9 +47,8 @@ CREATE TABLE books (
   description VARCHAR(255) NOT NULL,
   picture VARCHAR(255),
   language VARCHAR(45),
-  keywords VARCHAR(255),
-  loans INT
-);
+  keywords VARCHAR(255)
+  );
 
 CREATE TABLE authors (
   id INT PRIMARY KEY AUTO_INCREMENT,
