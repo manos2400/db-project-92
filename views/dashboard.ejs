@@ -83,10 +83,10 @@
             <%= book.title %>
           </td>
           <td>
-            <%= book.date.toISOString().split("T")[0] %>
+            <%= book.date %>
           </td>
           <td>
-            <%= book.date_due.toISOString().split("T")[0] %>
+            <%= book.date_due %>
           </td>
           <% if (book.waited) {%>
           <td>
@@ -121,14 +121,14 @@
           <tr>
             <td><%= book.title %></td>
             <td>
-              <%= book.date_out.toISOString().split("T")[0] %>
+              <%= book.date_out %>
             </td>
             <td>
-              <%= book.date_due.toISOString().split("T")[0] %>
+              <%= book.date_due %>
             </td>
             <%if(book.date_in) {%>
             <td>
-              <%= book.date_in.toISOString().split("T")[0]%>
+              <%= book.date_in%>
             </td>
             <%} else {%>
             <td>-</td>

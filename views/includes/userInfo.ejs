@@ -74,6 +74,16 @@
                 {{ user.type }}</span></div>
           </div>
           <hr>
+          <div v-if="averageRating">
+          <div class="row">
+            <div class="col-sm-3">
+              <h6 class="mb-0">Average Rating</h6>
+            </div>
+            <div class="col-sm-5 text-secondary"><span>
+                {{ averageRating }}</span></div>
+          </div>
+          <hr>
+        </div>
           <div v-if="user.status === 'pending'" class="d-flex justify-content-center">
 
             <form name="acceptForm" method="POST" :action="'/users/pending/accept/' + user.id">

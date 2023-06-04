@@ -1,5 +1,6 @@
 const express = require("express");
-const pool = require("../database.js");
+const { pool } = require("../database.js");
+
 const multer = require("multer");
 const router = express.Router();
 const fs = require("fs");
@@ -350,31 +351,7 @@ router.post("/review/:id", async (req, res) => {
     return res.status(503).send("Database is currently unavailable.");
   }
 });
-router.get("/reviews/:id", async (req, res) => {
-  if (!req.session.loggedIn) {
-    return res.redirect("/");
-  }
-  const { id } = req.params;
-  const connection = await pool.getConnection();
-  try {
-      const book = await connection.query(`SELECT title FROM books WHERE id = ?;`, [id]);
-      const reviews = await connection.query(`
-          SELECT reviews.*, users.real_name AS user_name
-          FROM reviews 
-          INNER JOIN users ON reviews.user_id = users.id
-          WHERE reviews.book_id = ?
-          ORDER BY reviews.date DESC;
-      `, [id]);
-      return res.status(200).render("reviews", {
-        session: req.session,
-        title: book[0].title,
-        reviews
-      });
-  } catch (error) {
-    console.error(error);
-    return res.status(503).send("Database is currently unavailable.");
-  }
-});
+router.use("/reviews", require("./reviews.js"));
 
 router.post("/review/edit/:id", async (req, res) => {
   if (!req.session.loggedIn) {

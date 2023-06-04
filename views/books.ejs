@@ -48,6 +48,8 @@
       </form>
       <% } %>
     </div>
+    <div class="text-center">
+    <p class="text-bold" v-if="averageRating"> The average rating in this book category is: {{ averageRating }}</p></div>
     <div class="main-body">
       <div class="books">
         <% books.forEach(book => {%>
@@ -88,6 +90,7 @@
           quantity: null,
           category: "Category"
         },
+        averageRating: null,
         // Book data for new and edit book forms
         title: null,
         authors: null,
@@ -272,6 +275,20 @@
             .then(response => {
               // Handle success
               this.message = response.data;
+            })
+            .catch(error => {
+              this.message = error.response.data;
+            });
+        }
+      },
+      mounted() {
+        const urlParams = new URLSearchParams(window.location.search);
+        if(urlParams.get('category')) {
+          this.searchTerm.category = urlParams.get('category');
+          axios.get(`/books/reviews/average?category=${urlParams.get('category')}`)
+            .then(response => {
+              // Handle success
+              this.averageRating = response.data.average_rating;
             })
             .catch(error => {
               this.message = error.response.data;

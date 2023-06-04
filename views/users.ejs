@@ -21,9 +21,8 @@
   <link rel="stylesheet" href="/css/newUser.css">
   <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
-  <script src="https://unpkg.com/vue@next"></script>
-  <script src="https://code.jquery.com/jquery-3.7.0.slim.min.js" integrity="sha256-tG5mcZUtJsZvyKAxYLVXrmjKBVLd6VpVccqz/r4ypFE=" crossorigin="anonymous"></script>
-  <script src="https://cdn.datatables.net/v/bs5/dt-1.13.4/datatables.min.js"></script>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
   <link href="https://cdn.datatables.net/v/dt/dt-1.13.4/datatables.min.css" rel="stylesheet"/>
 </head>
 
@@ -71,7 +70,7 @@
 
             <button class="btn btn-primary ms-md-2" type="button" @click="getUserData(<%= user.id %>, true)">Show More</button>
           </td>
-         </div>
+         
           </tr>
         <% }); %>
       </tbody>
@@ -115,7 +114,10 @@
       <%- include("includes/newUser.ejs") %>
     </div>
   </div>
+  </div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.7.0.slim.min.js" integrity="sha256-tG5mcZUtJsZvyKAxYLVXrmjKBVLd6VpVccqz/r4ypFE=" crossorigin="anonymous"></script>
+  <script src="https://cdn.datatables.net/v/bs5/dt-1.13.4/datatables.min.js"></script>
   <script>
     const app = Vue.createApp({
       data() {
@@ -125,6 +127,7 @@
         editPanel: "dialog-container hidden",
         createPanel: "dialog-container hidden",
         user: null,
+        averageRating: null,
         message: null,
         // Edit Info
         username: '',
@@ -156,6 +159,14 @@
               console.log('Error:', error);
             });
           } else {
+          axios.get('/books/reviews/average?user=' + id)
+            .then(response => {
+              if(response.data) this.averageRating = response.data.average_rating;
+            })
+            .catch(error => {
+              console.log('Error:', error);
+            });
+          }
           axios.get('/users/' + id)
             .then(response => {
               this.user = response.data;
@@ -165,8 +176,7 @@
             .catch(error => {
               console.log('Error:', error);
             });
-          }
-        },
+          },
         openEditDialog() {
           this.username = this.user.username;
           this.password = this.user.password;
