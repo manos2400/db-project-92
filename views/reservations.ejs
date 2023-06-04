@@ -42,6 +42,7 @@
         <tr>
           <th>User</th>
           <th>Book</th>
+          <th>Status</th>
           <th>Date</th>
           <th>Date Due</th>
           <th>Manage</th>
@@ -56,6 +57,15 @@
           <td>
             <%= reservation.title %>
           </td>
+          <% if (reservation.waited) {%>
+            <td>
+              <span class="badge bg-warning">Waiting</span>
+            </td>
+            <% } else {%>
+            <td>
+              <span class="badge bg-success">Active</span>
+            </td>
+            <% } %>
           <td>
             <%= reservation.date %>
           </td>
@@ -103,9 +113,10 @@
         columnDefs: [
           { "width": "26%", "targets": 0 },
           { "width": "30%", "targets": 1 },
-          { "width": "11%", "targets": 2 },
-          { "width": "11%", "targets": 3 },
-          { "width": "22%", "targets": 4 },        ]
+          { "width": "4%", "targets": 2 },
+          { "width": "10%", "targets": 3 },
+          { "width": "10%", "targets": 4 },
+          { "width": "20%", "targets": 5 },        ]
       });
     });
     </script>
