@@ -24,7 +24,7 @@ VALUES
 ("student13", "password18", "Abigail Hernandez", "2008-01-01", "student13@school.edu", "1010 Cedar St", "555-1010", "student"),
 ("student14", "password19", "Joshua Smith", "2006-07-07", "student14@school.edu", "1111 Oak St", "555-1112", "student"),
 ("student15", "password20", "Emma Nguyen", "2007-02-14", "student15@school.edu", "1212 Maple St", "555-1212", "student"),
-("student16", "password21", "Christopher Wilson", "2006-09-23", "student16@school.edu", "1313 Elm St", "555-1313", "student",),
+("student16", "password21", "Christopher Wilson", "2006-09-23", "student16@school.edu", "1313 Elm St", "555-1313", "student"),
 ("student17", "password22", "Olivia Davis", "2007-05-06", "student17@school.edu", "1414 Pine St", "555-1414", "student"),
 ("student18", "password23", "David Rodriguez", "2006-12-15", "student18@school.edu", "1515 Maple St", "555-1515", "student"),
 ("student19", "password24", "Ava Martinez", "2008-02-22", "student19@school.edu", "1616 Cedar St", "555-1616", "student"),
